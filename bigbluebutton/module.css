@@ -1,0 +1,11 @@
+div#bigbluebutton {
+	border: 1px solid #ccc;
+	padding: 10px;
+	width: 80%;
+	margin-right: auto;
+	margin-left: auto;
+	background-color: #efefef;
+	color: #444;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
