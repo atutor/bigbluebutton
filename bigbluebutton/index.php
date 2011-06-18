@@ -5,7 +5,7 @@ $_custom_css = $_base_path . 'mods/bigbluebutton/module.css'; // use a custom st
 require (AT_INCLUDE_PATH.'header.inc.php');
 require "bbb_api_conf.php";
 require "bbb_api.php";
-  
+ 
 ?>
 
 
@@ -48,10 +48,12 @@ require "bbb_api.php";
    $row=mysql_fetch_array($result);
  
    
-   echo " <div id='bigbluebutton'>
-             <table border='2' >
+   echo "
+          <img src='/atutor/docs/mods/bigbluebutton/bigbluebutton.png'>
+          <div id='bigbluebutton'>
+             <table border='2'>
          	 <tr>
-                 <td>Course timing</td><td>$row[1]</td>
+                 <td width='200'>Course timing</td><td>$row[1]</td>
              </tr>
              <tr>
                  <td>Message</td><td>$row[2]</td>
@@ -61,7 +63,7 @@ require "bbb_api.php";
              </br>
           ";
 
-  echo"<a href='$bbb_joinURL' target='_blank'>Click here</a> to go to BigBlueButtton classroom. </div>";	
+  echo"<a href='$bbb_joinURL' target='_blank'><b>Click here</b></a> to go to BigBlueButtton classroom. </div>";	
 ?>
 
 <?php require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

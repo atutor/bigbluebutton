@@ -90,7 +90,7 @@ $this->_pages['mods/bigbluebutton/index.php']['img']       = 'mods/bigbluebutton
 
 $this->_content_tools[] = array("id"=>"bigbluebutton_tool", 
                                 "class"=>"fl-col clickable", 
-                                "src"=>AT_BASE_HREF."mods/bigbluebutton/bigbluebutton.jpg",
+                                "src"=>AT_BASE_HREF."mods/bigbluebutton/bigbluebutton.png",
                                 "title"=>_AT('bigbluebutton_tool'),
                                 "alt"=>_AT('bigbluebutton_tool'),
                                 "text"=>_AT('bigbluebutton'), 

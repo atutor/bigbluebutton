@@ -5,13 +5,15 @@ define('AT_INCLUDE_PATH', '../../include/');
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 authenticate(AT_PRIV_BIGBLUEBUTTON);
+$_custom_css = $_base_path . 'mods/bigbluebutton/module.css'; // use a custom stylesheet
 require (AT_INCLUDE_PATH.'header.inc.php');
 require "bbb_api_conf.php";
 require "bbb_api.php";
-  
+echo"<img src='/atutor/docs/mods/bigbluebutton/bigbluebutton.png'>
+	<br>
+	<br>
+	<div id='bigbluebutton'>";
 
- //echo AT_CONTENT_DIR."course id".$_SESSION['course_id'];
-  
  
  $bbb_joinURL;
  $_courseId=$_SESSION['course_id'];
@@ -58,28 +60,34 @@ require "bbb_api.php";
 //---------------------------------------------------
 if ($_GET['Edit_button']=="Edit")
 {
-	echo "editing";
+	echo "<b>Edit</b></br>";
 ?>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
-
-    <table border="2" class="">
-        <tr>
-            <td>Course timing</td>
-            <td>Message</td>
-        </tr>
-        <tr>
- <?php    
+<?php 
+    
     $_courseTiming   =$_GET['course_timing'];
     $_courseMessage  =$_GET['course_message'];
-    echo "  <td><input type='hidden' name='create_classroom' value='checked'>
-            <input type='text' name='course_timing'  value='$_courseTiming'/> </td>
-        <td><input type='text' name='course_message' value='$_courseMessage' /> </td>"
+    echo "<table border='2'>
+            <tr>
+                <td>Course timing</td>
+                <td>
+                   <input type='hidden' name='create_classroom' value='checked'>
+                   <input type='text' name='course_timing'  value='$_courseTiming'/>
+                </td>                
+            </tr>
+            <tr>
+                <td>
+                    Message
+                </td>
+                <td>
+                    <input type='text' name='course_message' value='$_courseMessage' />
+                </td>
+                 </tr>
+          </table>
+          <input type='submit' name='submit_after_editing' value='submit'/>
+       </form>";
         
-   ?> </tr>
-</table>
-       <input type="submit" name="submit_after_editing" value='submit'/>
-</form>
-<?php 	
+   
 }
 elseif (isset($_GET['submit_after_editing']))//=='submit')
 {
@@ -87,10 +95,12 @@ elseif (isset($_GET['submit_after_editing']))//=='submit')
 	$_courseTiming=$_GET['course_timing'];
 	$_courseMessage=$_GET['course_message'];
 	require(AT_INCLUDE_PATH . 'classes/sqlutility.class.php');
-    $sql="UPDATE  ".TABLE_PREFIX."bigbluebutton SET  `course_timing`='$_courseTiming', `course_message` =  '$_courseMessage' WHERE  `course_id` ='$_courseId'";
+    $sql="UPDATE ".TABLE_PREFIX."bigbluebutton SET  course_timing ='$_courseTiming', message ='$_courseMessage' WHERE  course_id ='$_courseId' ;";
 	$result = mysql_query($sql, $db);
     if ($result==FALSE)
-	echo "teri maa ki".$_courseId ;
+	    echo "unable to connect to database" ;
+	else
+	{
 	?> 
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
  		<table border="2" class="">
@@ -111,7 +121,7 @@ elseif (isset($_GET['submit_after_editing']))//=='submit')
   		<input type="submit" value="Edit" name="Edit_button"/>
 		</form>
 		<?php 
-	
+	}
 	
 }
 
@@ -134,45 +144,47 @@ elseif ($_GET['Edit_button']!="Edit")
    
 	if(!$flag)
 	{
-		echo "Create virtual classroom";
-
 	?>
+	
+	  Set course timing and message<br><br>
+	  	
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 
-    <table border="2" class="">
+    <table border="2" >
         <tr>
             <td>Course timing</td>
-            <td>Message</td>
+            <td><input type='hidden' name='create_classroom' value="checked"><input type="text" name="course_timing" /> </td>
+            
         </tr>
         <tr>
-        <td><input type='hidden' name='create_classroom' value="checked"><input type="text" name="course_timing" /> </td>
+        <td>Message</td>
         <td><input type="text" name="course_message" /> </td>
         
  	    </tr>
 	</table>
     <input type="submit" value="submit" name='submit_button'/>
     </form>
+    
 
 	<?php
 	}
 	else 
 	{
 	//code for displaying result
-	echo "Welcome to BBB <br/>";
+	echo "Welcome to BBB <br><br>";
 	
  	?> 
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
- 		<table border="2" class="">
+ 		<table border="2" >
          
  		<?php 
        		echo" <tr>
-                  <td>Course timing</td><td><input type='text' name='course_timing' value='$row[1]'  hidden/>$row[1]</td>
+                  <td WIDTH='200'>Course timing</td><td><input type='text' name='course_timing' value='$row[1]'  hidden/>$row[1]</td>
                   </tr>
              	  <tr>
              	  <td>Message</td><td><input type='text' name='course_message' value='$row[2]'  hidden />$row[2]</td>
                   </tr>       
-                 "
-              
+                 "             
   		?>      
    
 		</table>
@@ -183,7 +195,7 @@ elseif ($_GET['Edit_button']!="Edit")
      }
 }
 
-    echo"</br><a href='$bbb_joinURL' target='_blank'>Click here</a> to go to BigBlueButtton classroom."    
+    echo"</br></br></br><a href='$bbb_joinURL' target='_blank'><b>Click here</b></a> to go to BigBlueButtton classroom.</div>"    
 ?> 
 
 <?php  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>
