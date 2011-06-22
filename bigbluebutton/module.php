@@ -19,38 +19,6 @@ define('AT_ADMIN_PRIV_BIGBLUEBUTTON', $this->getAdminPrivilege());
  * create a side menu box/stack.
  */
 $this->_stacks['bigbluebutton'] = array('title_var'=>'bigbluebutton', 'file'=>'mods/bigbluebutton/side_menu.inc.php');
-// ** possible alternative: **
-// $this->addStack('hello_world', array('title_var' => 'hello_world', 'file' => './side_menu.inc.php');
-
-/*******
- * create optional sublinks for module "detail view" on course home page
- * when this line is uncommented, "mods/hello_world/sublinks.php" need to be created to return an array of content to be displayed
- */
-//$this->_list['hello_world'] = array('title_var'=>'hello_world','file'=>'mods/hello_world/sublinks.php');
-
-// Uncomment for tiny list bullet icon for module sublinks "icon view" on course home page
-//$this->_pages['mods/hello_world/index.php']['icon']      = 'mods/hello_world/hello_world_sm.jpg';
-
-// Uncomment for big icon for module sublinks "detail view" on course home page
-//$this->_pages['mods/hello_world/index.php']['img']      = 'mods/hello_world/hello_world.jpg';
-
-// ** possible alternative: **
-// the text to display on module "detail view" when sublinks are not available
-//$this->_pages['mods/hello_world/index.php']['text']      = _AT('hello_world_text');
-
-/*******
- * if this module is to be made available to students on the Home or Main Navigation.
- */
-$_group_tool = $_student_tool = 'mods/bigbluebutton/index.php';
-
-/*******
- * add the admin pages when needed.
- */
-//if (admin_authenticate(AT_ADMIN_PRIV_HELLO_WORLD, TRUE) || admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)) {
-//	$this->_pages[AT_NAV_ADMIN] = array('mods/hello_world/index_admin.php');
-//	$this->_pages['mods/hello_world/index_admin.php']['title_var'] = 'hello_world';
-//	$this->_pages['mods/hello_world/index_admin.php']['parent']    = AT_NAV_ADMIN;
-//}
 
 /*******
  * instructor Manage section:
@@ -66,16 +34,6 @@ $this->_pages['mods/bigbluebutton/index_instructor.php']['parent']   = 'tools/in
  */
 $this->_pages['mods/bigbluebutton/index.php']['title_var'] = 'bigbluebutton';
 $this->_pages['mods/bigbluebutton/index.php']['img']       = 'mods/bigbluebutton/bigbluebutton.jpg';
-
-/* public pages */
-#$this->_pages[AT_NAV_PUBLIC] = array('mods/hello_world/index_public.php');
-#$this->_pages['mods/hello_world/index_public.php']['title_var'] = 'hello_world';
-#$this->_pages['mods/hello_world/index_public.php']['parent'] = AT_NAV_PUBLIC;
-
-/* my start page pages */
-//$this->_pages[AT_NAV_START]  = array('mods/hello_world/index_mystart.php');
-//$this->_pages['mods/hello_world/index_mystart.php']['title_var'] = 'hello_world';
-//$this->_pages['mods/hello_world/index_mystart.php']['parent'] = AT_NAV_START;
 
 /*******
  * Use the following array to define a tool to be added to the Content Editor's icon toolbar. 

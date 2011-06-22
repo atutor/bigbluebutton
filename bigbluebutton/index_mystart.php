@@ -7,7 +7,7 @@ require (AT_INCLUDE_PATH.'header.inc.php');
 ?>
 
 <div id="bigbluebutton">
-	This is a page of the Hello World module that requires a login session, but might contain a tool that is not a course tool :)
+	This is a page of the BigBlueButton module that requires that enables video conferencing and much more.
 </div>
 
 <?php require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

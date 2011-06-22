@@ -1,14 +1,12 @@
 <?php
-// 1. define relative path to `include` directory:
 define('AT_INCLUDE_PATH', '../../include/');
-
-// 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 authenticate(AT_PRIV_BIGBLUEBUTTON);
 $_custom_css = $_base_path . 'mods/bigbluebutton/module.css'; // use a custom stylesheet
 require (AT_INCLUDE_PATH.'header.inc.php');
 require "bbb_api_conf.php";
 require "bbb_api.php";
+
 echo"<img src='/atutor/docs/mods/bigbluebutton/bigbluebutton.png'>
 	<br>
 	<br>
@@ -16,32 +14,43 @@ echo"<img src='/atutor/docs/mods/bigbluebutton/bigbluebutton.png'>
 
  
  $bbb_joinURL;
- $_courseId=$_SESSION['course_id'];
- $_courseTiming=$_GET['course_timing'];
- $_courseMessage=$_GET['course_message'];
- $_moderatorPassword="mp";
- $_attendeePassword="ap";   
- $_logoutUrl= "http://bigbluebutton.org";
- $username=get_login(intval($_SESSION['member_id']));
- $meetingID=$_SESSION['course_id'];
+ $courseId           = $_SESSION['course_id'];
+ $courseTiming       = $_GET['course_timing'];
+ $courseMessage      = $_GET['course_message'];
+ $moderatorPassword  = "mp";
+ $attendeePassword   = "ap";   
+ $logoutUrl          = "http://bigbluebutton.org";
+ $username           = get_login(intval($_SESSION['member_id']));
+ $meetingID          = $_SESSION['course_id'];
  
  
-// $response = BigBlueButton::createMeetingArray($username,$meetingID,"welcome to the Classroom",$_moderatorPassword,$_attendeePassword, $salt, $url,$_logoutUrl);
+ $response           = BigBlueButton::createMeetingArray($username,
+                                                         $meetingID,
+                                                         "welcome to the Classroom",
+                                                         $moderatorPassword,
+                                                         $attendeePassword,
+                                                         $salt,
+                                                         $url,
+                                                         $logoutUrl);
 
 	//Analyzes the bigbluebutton server's response
-	if(!$response){//If the server is unreachable
-		$msg = 'Unable to join the meeting. Please check the url of the bigbluebutton server AND check to see if the bigbluebutton server is running.';
+	if (!$response){//If the server is unreachable
+	    $msg = 'Unable to join the meeting. Please check the url of the bigbluebutton server AND check to see if the bigbluebutton server is running.';
 	}
-	else if( $response['returncode'] == 'FAILED' ) { //The meeting was not created
-		if($response['messageKey'] == 'checksumError'){
-			$msg = 'A checksum error occured. Make sure you entered the correct salt.';
+	else if ( $response['returncode'] == 'FAILED' ) { //The meeting was not created
+	    if ($response['messageKey'] == 'checksumError'){
+		    $msg = 'A checksum error occured. Make sure you entered the correct salt.';
 		}
-		else{
-			$msg = $response['message'];
+		else {
+		    $msg = $response['message'];
 		}
 	}
-	else{ //The meeting was created, and the user will now be joined
-	//	$bbb_joinURL = BigBlueButton::joinURL($meetingID,$username,"mp", $salt, $url);
+	else { //The meeting was created, and the user will now be joined
+	    $bbb_joinURL = BigBlueButton::joinURL($meetingID,
+	                                          $username,
+	                                          $moderatorPassword,
+	                                          $salt,
+	                                          $url);
 		
 	}
 
@@ -65,24 +74,24 @@ if ($_GET['Edit_button']=="Edit")
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 <?php 
     
-    $_courseTiming   =$_GET['course_timing'];
-    $_courseMessage  =$_GET['course_message'];
+    $_courseTiming   = $_GET['course_timing'];
+    $_courseMessage  = $_GET['course_message'];
     echo "<table border='2'>
-            <tr>
-                <td>Course timing</td>
-                <td>
-                   <input type='hidden' name='create_classroom' value='checked'>
-                   <input type='text' name='course_timing'  value='$_courseTiming'/>
-                </td>                
-            </tr>
-            <tr>
-                <td>
-                    Message
-                </td>
-                <td>
-                    <input type='text' name='course_message' value='$_courseMessage' />
-                </td>
-                 </tr>
+              <tr>
+                  <td>Course timing</td>
+                  <td>
+                      <input type='hidden' name='create_classroom' value='checked'>
+                      <input type='text' name='course_timing'  value='$_courseTiming'/>
+                  </td>                
+              </tr>
+              <tr>
+                  <td>
+                      Message
+                  </td>
+                  <td>
+                      <input type='text' name='course_message' value='$_courseMessage' />
+                  </td>
+              </tr>
           </table>
           <input type='submit' name='submit_after_editing' value='submit'/>
        </form>";
@@ -91,34 +100,34 @@ if ($_GET['Edit_button']=="Edit")
 }
 elseif (isset($_GET['submit_after_editing']))//=='submit')
 {
-	$_courseId=$_SESSION['course_id'];
-	$_courseTiming=$_GET['course_timing'];
-	$_courseMessage=$_GET['course_message'];
+	$courseId       =  $_SESSION['course_id'];
+	$courseTiming   =  $_GET['course_timing'];
+	$courseMessage  =  $_GET['course_message'];
+	
 	require(AT_INCLUDE_PATH . 'classes/sqlutility.class.php');
-    $sql="UPDATE ".TABLE_PREFIX."bigbluebutton SET  course_timing ='$_courseTiming', message ='$_courseMessage' WHERE  course_id ='$_courseId' ;";
-	$result = mysql_query($sql, $db);
+    
+	$sql="UPDATE ".TABLE_PREFIX."bigbluebutton SET  course_timing ='$courseTiming', message ='$courseMessage' WHERE  course_id ='$courseId' ;";
+	$result        =  mysql_query($sql, $db);
     if ($result==FALSE)
 	    echo "unable to connect to database" ;
-	else
-	{
-	?> 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
- 		<table border="2" class="">
+	else {
+	    ?> 
+	    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
+ 		    <table border="2" class="">
          
  		<?php 
-       		echo" <tr>
+       	echo" <tr>
                   <td>Course timing</td><td><input type='text' name='course_timing' value='$_courseTiming' hidden/>$_courseTiming</td>
-                  </tr>
-             	  <tr>
+              </tr>
+              <tr>
              	  <td>Message</td><td><input type='text' name='course_message' value='$_courseMessage' hidden />$_courseMessage</td>
-                  </tr>       
-                "
+              </tr>       
+            "
               
   		?>      
    
-		</table>
-
-  		<input type="submit" value="Edit" name="Edit_button"/>
+		    </table>
+  		    <input type="submit" value="Edit" name="Edit_button"/>
 		</form>
 		<?php 
 	}
@@ -127,71 +136,54 @@ elseif (isset($_GET['submit_after_editing']))//=='submit')
 
 elseif ($_GET['Edit_button']!="Edit")
 {
-    $flag=FALSE;
+    $flag   = FALSE;
 	$result = mysql_query("SELECT * FROM ".TABLE_PREFIX."bigbluebutton");
 	$row;
-	while($row = mysql_fetch_array($result))
-	{
-		//echo $row[0].$_SESSION['course_id'];
-	
-		if((int)$row[0]==(int)$_SESSION['course_id'])
-        {
-      		
-      		$flag=TRUE;
+	while($row = mysql_fetch_array($result)){
+	    if((int)$row[0]==(int)$_SESSION['course_id']){
+	   	    $flag = TRUE;
       		break;
         }
     }
    
-	if(!$flag)
-	{
-	?>
-	
-	  Set course timing and message<br><br>
-	  	
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
-
-    <table border="2" >
-        <tr>
-            <td>Course timing</td>
-            <td><input type='hidden' name='create_classroom' value="checked"><input type="text" name="course_timing" /> </td>
-            
-        </tr>
-        <tr>
-        <td>Message</td>
-        <td><input type="text" name="course_message" /> </td>
-        
- 	    </tr>
-	</table>
-    <input type="submit" value="submit" name='submit_button'/>
-    </form>
-    
-
-	<?php
+	if(!$flag) {
+	    ?>
+	    Set course timing and message<br><br>
+	  	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
+            <table border="2" >
+                <tr>
+                    <td>Course timing</td>
+                    <td><input type='hidden' name='create_classroom' value="checked"><input type="text" name="course_timing" /> </td>
+                </tr>
+                <tr>
+                    <td>Message</td>
+                    <td><input type="text" name="course_message" /> </td>
+        	    </tr>
+	        </table>
+            <input type="submit" value="submit" name='submit_button'/>
+        </form>
+    	<?php
 	}
-	else 
-	{
-	//code for displaying result
-	echo "Welcome to BBB <br><br>";
+	else {
+	    echo "Welcome to BBB <br><br>";
 	
  	?> 
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
- 		<table border="2" >
+ 	    <table border="2" >
          
  		<?php 
-       		echo" <tr>
+       	echo" <tr>
                   <td WIDTH='200'>Course timing</td><td><input type='text' name='course_timing' value='$row[1]'  hidden/>$row[1]</td>
-                  </tr>
-             	  <tr>
+              </tr>
+              <tr>
              	  <td>Message</td><td><input type='text' name='course_message' value='$row[2]'  hidden />$row[2]</td>
-                  </tr>       
-                 "             
+              </tr>       
+            "             
   		?>      
-   
-		</table>
-
+   		</table>
   		<input type="submit" value="Edit" name="Edit_button"/>
-		</form>
-		<?php 
+	</form>
+	<?php 
      }
 }
 
