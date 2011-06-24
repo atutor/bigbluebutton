@@ -1,6 +1,7 @@
 Readme for the module of BBB
 
-Before installation 
+Prerequisite:
+Change the $salt and $url variables in bbb_api_conf.php to the match the salt and url of your Bigbluebutton server.
 
 Installation:-
 1)ZIP the whole package.
