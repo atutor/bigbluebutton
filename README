@@ -1,3 +1,18 @@
 Readme for the module of BBB
 
-The module will not work correctly right now.
+Before installation 
+
+Installation:-
+1)ZIP the whole package.
+2)Using admin account of atutor login.
+3)Click on Modules tab and in this click on "Install Modules" and then select the zipped package of BigBlueButton and install it.
+4)Then look into install modules for the name of BigBlueButton. Enable it.
+
+How to use
+1)Make an instructor account
+2)Create a cource.
+3)Enter inside the course. A new page will open and in it click on bigbluebutton tab and inside it you can set course timing and course message.
+4)Click on "Click here" to go to the Bigbluebutton virtual classroom
+5)Now make an student account. Get enrolled for a course. 
+6)Enter the course and then click on Bigbluebutton tab and inside it you will find the information about the virtual classroom and a link to the classroom.
+
