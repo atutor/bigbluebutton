@@ -3,7 +3,7 @@
 CREATE TABLE `bigbluebutton` (
    `course_id` VARCHAR( 15 ) NOT NULL,
    `course_timing` VARCHAR( 15 ) NOT NULL,
-   `message` TEXT NOT NULL,
+   `message` VARCHAR( 15 ) NOT NULL,
    PRIMARY KEY ( `course_id` )
 );
 
