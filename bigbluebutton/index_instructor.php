@@ -166,7 +166,7 @@ elseif ($_GET['Edit_button']!="Edit")
              	  <tr>
              	  <td>Message</td><td><input type='text' name='course_message' value='$row[2]'  hidden />$row[2]</td>
                   </tr>       
-                 "
+                "
               
   		?>      
    
