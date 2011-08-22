@@ -10,7 +10,6 @@ require "bbb_api_conf.php";
 require "bbb_api.php";
   
 
- //echo AT_CONTENT_DIR."course id".$_SESSION['course_id'];
   
  
  $bbb_joinURL;
@@ -43,8 +42,6 @@ require "bbb_api.php";
 		
 	}
 
-//-----------------------------------------------
-
 	
 	if($_GET['submit_button']=='submit')
     {
@@ -54,8 +51,7 @@ require "bbb_api.php";
 	  $result = mysql_query($sql, $db);
     }
     
-    
-//---------------------------------------------------
+
 if ($_GET['Edit_button']=="Edit")
 {
 	echo "editing";
@@ -81,7 +77,7 @@ if ($_GET['Edit_button']=="Edit")
 </form>
 <?php 	
 }
-elseif (isset($_GET['submit_after_editing']))//=='submit')
+elseif (isset($_GET['submit_after_editing']))
 {
 	$_courseId=$_SESSION['course_id'];
 	$_courseTiming=$_GET['course_timing'];
@@ -122,8 +118,7 @@ elseif ($_GET['Edit_button']!="Edit")
 	$row;
 	while($row = mysql_fetch_array($result))
 	{
-		//echo $row[0].$_SESSION['course_id'];
-	
+			
 		if((int)$row[0]==(int)$_SESSION['course_id'])
         {
       		

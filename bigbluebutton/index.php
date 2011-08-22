@@ -11,15 +11,10 @@ require "bbb_api.php";
 
 <?php
  $bbb_joinURL;
-// $_courseName=$_GET['courseName'];
-// $_courseId=$_GET['courseId'];
-// $_courseTiming=$_GET['course_timing'];
-// $_courseMessage=$_GET['course_message'];
  $_moderatorPassword="mp";
  $_attendeePassword="ap";   
  $_logoutUrl= "http://bigbluebutton.org";
  $username=get_login(intval($_SESSION["member_id"]));
- //echo $_SESSION["member_id"];
  $meetingID=$_SESSION['course_id'];
  $response = BigBlueButton::createMeetingArray($username,$meetingID,"Welcome to the Classroom", $_moderatorPassword,$_attendeePassword, $salt, $url,$_logoutUrl);
 
@@ -40,7 +35,7 @@ require "bbb_api.php";
 		
 	}
 	
-/////////////////////////////////////////////////////////////////////////////        
+      
   $_courseId=$_SESSION['course_id'];
  
    $sql = "SELECT * FROM ".TABLE_PREFIX."bigbluebutton WHERE `course_id`='$_courseId'" ;
