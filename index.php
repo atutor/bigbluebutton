@@ -1,8 +1,12 @@
 <?php
 define('AT_INCLUDE_PATH', '../../include/');
+define('AT_INCLUDE_PATH', '/Applications/MAMP/htdocs/atutorgit/ATutor/docs/include/');
 require (AT_INCLUDE_PATH.'vitals.inc.php');
+echo "hrehe";
+exit;
 $_custom_css = $_base_path . 'mods/bigbluebutton/module.css'; // use a custom stylesheet
 require (AT_INCLUDE_PATH.'header.inc.php');
+
 require "bbb_api_conf.php";
 require "bbb_api.php";
   
@@ -10,6 +14,8 @@ require "bbb_api.php";
 
 
 <?php
+
+
  $bbb_joinURL;
  $_moderatorPassword="mp";
  $_attendeePassword="ap";   

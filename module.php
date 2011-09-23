@@ -46,11 +46,12 @@ $_group_tool = $_student_tool = 'mods/bigbluebutton/index.php';
 /*******
  * add the admin pages when needed.
  */
-//if (admin_authenticate(AT_ADMIN_PRIV_HELLO_WORLD, TRUE) || admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)) {
-//	$this->_pages[AT_NAV_ADMIN] = array('mods/hello_world/index_admin.php');
-//	$this->_pages['mods/hello_world/index_admin.php']['title_var'] = 'hello_world';
-//	$this->_pages['mods/hello_world/index_admin.php']['parent']    = AT_NAV_ADMIN;
-//}
+if (admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON, TRUE) || admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)) {
+	$this->_pages[AT_NAV_ADMIN] = array('mods/bigbluebutton/index_admin.php');
+	$this->_pages['mods/bigbluebutton/index_admin.php']['title_var'] = 'bigbluebutton';
+	$this->_pages['mods/bigbluebutton/index_admin.php']['parent']    = AT_NAV_ADMIN;
+		$this->_pages['mods/bigbluebutton/change_admin.php']['title_var'] = 'bigbluebutton';
+}
 
 /*******
  * instructor Manage section:
