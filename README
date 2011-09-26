@@ -1,28 +1,35 @@
-Readme for the module of BBB
+# Readme for the ATutor BigBlueButton module #
 
 Prerequisite:
-Change the $salt and $url variables in bbb_api_conf.php to the match the salt and url of your Bigbluebutton server.
+A functioning BigBlueButton server
 
-Installation:-
-1)ZIP the whole package.
-2)Using admin account of atutor login.
-3)Click on Modules tab and in this click on "Install Modules" and then select the zipped package of BigBlueButton and install it.
-4)Then look into install modules for the name of BigBlueButton. Enable it.
+Installation:
+1) Unzip the module into the ATutor mods/ directory to create a bigbluebutton sub-directory.
+2) Login to ATutor as the administrator
+3) Click Modules tab, then Install Module. The module you just unzipped should appear near the top of the screen.
+4) Click Install Module and follow the instructions to install. 
+5) Once Installed it will be listed with the other module, though Disabled. Select the module and click the Enable button below.
+5) Open the BigBlueButton tab above that was added when the module was enabled
+6) Enter the URL to the BigBlueButton installation
+7) Enter the SALT security hash found in the BigBlueButton's bigbluebutton.properties file of your BigBlueButton installation. Look for the value of "beans.dynamicConferencceService.securitySalt". 
+8) BigBlueButton is successfully installed when it appears below the BigBlueButton Configuration area.
 
 How to use:-
 
 For Instructors
 ----------------
-1)Make an instructor account
-2)Create a cource.
-3)Enter inside the course. A new page will open and in it click on bigbluebutton tab and inside it you can set course timing and course message.
-4)Click on "Click here" to go to the Bigbluebutton virtual classroom.
-5)Now make an student account. Get enrolled for a course. 
-6)Enter the course and then click on Bigbluebutton tab and inside it you will find the information about the virtual classroom and a link to the classroom.
+1) Login a an ATutor instructor
+2) Under the Manage tab when in a course, click on the BigBlueButton link.
+3) If a BigBlueButton meeting does not yet exist, the Create Meeting form will appear. Enter a meeting time and a meeting description and press the Create Meeting button.
+4) The Create Meeting will be replaces with a table listing the meeting, with a link to join the meeting (only one meeting per course in this version of the module)
+5) Click the Edit button to change meeting details, or click Delete to remove the meeting. 
+6) Click on Join Meeting through the Manage BigBlueButton screen to have moderator privileges granted (login through the Student screen provides attendee privileges only)
+7) Enter the course and then click on Bigbluebutton tab and inside it you will find the information about the virtual classroom and a link to the classroom.
+8) Return to the Manage screen and click on Course Tools. Check one of the checkboxes next to the module to add it as a course tool and make it available to students.
 
-For Student
+For Students
 ------------
-1)After the administrator has enabled th BigBlueButton module, a tab of BIgBlueButton will be added on the course page.
-2)On clicking the tab, student will be directed to the page with information about the virtual classroom and a link to it.
-3)A student can enter the class room at any point of the day even if no class is going on at that time.
+1) Click on the BigBlueButton tab at the top of the screen, or the BigBlueButton module link on the coure homepage, whichever is enabled for the course.
+2) On the screen that opens. click on the Join Conference link next to the meeting listed 
+3) A student can enter the meeting room at any point of the day even if no class is going on at that time.
 

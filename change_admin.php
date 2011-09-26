@@ -1,19 +1,17 @@
 <?php
-	/****************************************************************/
-	/* OpenLearn module for ATutor                                  */
-	/* http://atutoropenlearn.wordpress.com                         */
-	/*                                                              */
-	/* This module allows to search OpenLearn for educational       */
-	/* content.														*/
-	/* Author: Herat Gandhi											*/
-	/* This program is free software. You can redistribute it and/or*/
-	/* modify it under the terms of the GNU General Public License  */
-	/* as published by the Free Software Foundation.				*/
-	/****************************************************************/
-	/**
-	 * This php file is backend code needed for admin panel.
-	 * It is used for changing module settings by admin.
-	 */
+/****************************************************************/
+/* BigBlueButton module for ATutor                              */
+/* https://github.com/nishant1000/BigBlueButton-module-for-ATutor*/
+/*                                                              */
+/* This module allows to search OpenLearn for educational       */
+/* content.														*/
+/* Author: Nishant Kumar										*/
+/* This program is free software. You can redistribute it and/or*/
+/* modify it under the terms of the GNU General Public License  */
+/* as published by the Free Software Foundation.				*/
+/****************************************************************/
+// $Id$
+
 	define('AT_INCLUDE_PATH', '../../include/');
 	require (AT_INCLUDE_PATH . 'vitals.inc.php');
 	admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON);

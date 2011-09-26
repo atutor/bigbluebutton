@@ -1,184 +1,173 @@
 <?php
+/****************************************************************/
+/* BigBlueButton module for ATutor                              */
+/* https://github.com/nishant1000/BigBlueButton-module-for-ATutor*/
+/*                                                              */
+/* This module allows to search OpenLearn for educational       */
+/* content.														*/
+/* Author: Nishant Kumar										*/
+/* This program is free software. You can redistribute it and/or*/
+/* modify it under the terms of the GNU General Public License  */
+/* as published by the Free Software Foundation.				*/
+/****************************************************************/
+// $Id$
+
 // 1. define relative path to `include` directory:
 define('AT_INCLUDE_PATH', '../../include/');
 
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 authenticate(AT_PRIV_BIGBLUEBUTTON);
+
+
+// After confirming deleting a BBB meeting either delte it of return to the meeting list on cancel
+
+if (isset($_POST['submit_no'])) {
+	$msg->addFeedback('CANCELLED');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+	exit;
+} else if (isset($_POST['submit_yes'])) {
+	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_SESSION[course_id]'";
+	$result = mysql_query($sql,$db);
+	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+	exit;
+}
+
+// Create BBB Meeting
+
+if($_GET['create']){
+	if($_GET['course_timing'] !=''){
+		$bbb_message = $addslashes($_GET['course_message']);
+		$bbb_meeting_time = $addslashes($_GET['course_timing']);
+		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('$_SESSION[course_id]','$bbb_meeting_time','$bbb_message ')";
+		if($result = mysql_query($sql,$db)){
+			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+			exit;
+		}else{
+			$msg->addError('ACTION_FAILED');
+		}
+	}else{
+	
+			$msg->addError('TIME_REQUIRED_BBB');
+			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+			exit;
+	}
+// Update an existing BBB meeting
+
+} else if ($_GET['editthis']){
+	if($_GET['course_timing'] !=''){
+		$bbb_message = $addslashes($_GET['course_message']);
+		$bbb_meeting_time = $addslashes($_GET['course_timing']);
+		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET message = '$bbb_message', course_timing = '$bbb_meeting_time' WHERE course_id = '$_SESSION[course_id]'";
+	
+		if($result = mysql_query($sql, $db)){
+			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+		}else{
+			$msg->addError('BBB_ACTION_FAILED');
+		}
+	}else{
+	
+			$msg->addError('TIME_REQUIRED_BBB');
+			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+			exit;
+	}
+}
+
 require (AT_INCLUDE_PATH.'header.inc.php');
 require "bbb_api_conf.php";
 require "bbb_api.php";
-  
 
-  
- 
- $bbb_joinURL;
- $_courseId=$_SESSION['course_id'];
- $_courseTiming=$_GET['course_timing'];
- $_courseMessage=$_GET['course_message'];
- $_moderatorPassword="mp";
- $_attendeePassword="ap";   
- $_logoutUrl= "http://bigbluebutton.org";
- $username=get_login(intval($_SESSION['member_id']));
- $meetingID=$_SESSION['course_id'];
- 
- 
- $response = BigBlueButton::createMeetingArray($username,$meetingID,"welcome to the Classroom",$_moderatorPassword,$_attendeePassword, $salt, $url,$_logoutUrl);
+// Confirm deleting a BBB meeting before actually deleting it.
 
-	//Analyzes the bigbluebutton server's response
-	if(!$response){//If the server is unreachable
-		$msg = 'Unable to join the meeting. Please check the url of the bigbluebutton server AND check to see if the bigbluebutton server is running.';
-	}
-	else if( $response['returncode'] == 'FAILED' ) { //The meeting was not created
-		if($response['messageKey'] == 'checksumError'){
-			$msg = 'A checksum error occured. Make sure you entered the correct salt.';
-		}
-		else{
-			$msg = $response['message'];
-		}
-	}
-	else{ //The meeting was created, and the user will now be joined
-		$bbb_joinURL = BigBlueButton::joinURL($meetingID,$username,"mp", $salt, $url);
-		
-	}
-
-	
-	if($_GET['submit_button']=='submit')
-    {
-	
-      require(AT_INCLUDE_PATH . 'classes/sqlutility.class.php');
-      $sql = "INSERT INTO ".TABLE_PREFIX."bigbluebutton VALUES ('$_courseId','$_courseTiming','$_courseMessage')";
-	  $result = mysql_query($sql, $db);
-    }
-    
-
-if ($_GET['Edit_button']=="Edit")
-{
-	echo "editing";
-?>
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
-
-    <table border="2" class="">
-        <tr>
-            <td>Course timing</td>
-            <td>Message</td>
-        </tr>
-        <tr>
- <?php    
-    $_courseTiming   =$_GET['course_timing'];
-    $_courseMessage  =$_GET['course_message'];
-    echo "  <td><input type='hidden' name='create_classroom' value='checked'>
-            <input type='text' name='course_timing'  value='$_courseTiming'/> </td>
-        <td><input type='text' name='course_message' value='$_courseMessage' /> </td>"
-        
-   ?> </tr>
-</table>
-       <input type="submit" name="submit_after_editing" value='submit'/>
-</form>
-<?php 	
-}
-elseif (isset($_GET['submit_after_editing']))
-{
-	$_courseId=$_SESSION['course_id'];
-	$_courseTiming=$_GET['course_timing'];
-	$_courseMessage=$_GET['course_message'];
-	require(AT_INCLUDE_PATH . 'classes/sqlutility.class.php');
-    $sql="UPDATE  ".TABLE_PREFIX."bigbluebutton SET  `course_timing`='$_courseTiming', `course_message` =  '$_courseMessage' WHERE  `course_id` ='$_courseId'";
-	$result = mysql_query($sql, $db);
-    if ($result==FALSE)
-	echo "teri maa ki".$_courseId ;
-	?> 
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
- 		<table border="2" class="">
-         
- 		<?php 
-       		echo" <tr>
-                  <td>Course timing</td><td><input type='text' name='course_timing' value='$_courseTiming' hidden/>$_courseTiming</td>
-                  </tr>
-             	  <tr>
-             	  <td>Message</td><td><input type='text' name='course_message' value='$_courseMessage' hidden />$_courseMessage</td>
-                  </tr>       
-                "
-              
-  		?>      
-   
-		</table>
-
-  		<input type="submit" value="Edit" name="Edit_button"/>
-		</form>
-		<?php 
-	
-	
+if(isset($_GET['delete'])){
+	require_once(AT_INCLUDE_PATH . '/classes/Message/Message.class.php');
+	//global $savant;
+	$msg->addConfirm("BBB_DELETE_CONFIRM"); 
+	$msg->printConfirm();
 }
 
-elseif ($_GET['Edit_button']!="Edit")
-{
-    $flag=FALSE;
-	$result = mysql_query("SELECT * FROM ".TABLE_PREFIX."bigbluebutton");
-	$row;
-	while($row = mysql_fetch_array($result))
-	{
-			
-		if((int)$row[0]==(int)$_SESSION['course_id'])
-        {
-      		
-      		$flag=TRUE;
-      		break;
-        }
-    }
-   
-	if(!$flag)
-	{
-		echo "Create virtual classroom";
+// Set some variables
 
+$bbb_joinURL;
+$_courseId=$_SESSION['course_id'];
+$_courseTiming=$_POST['course_timing'];
+$_courseMessage=$_POST['course_message'];
+$_moderatorPassword="mp";
+$_attendeePassword="ap";   
+$_logoutUrl= $_base_href.'mods/bigbluebutton/index_instructor.php';
+$username=get_login(intval($_SESSION['member_id']));
+$meetingID=$_SESSION['course_id'];
+$bbb_welcome = _AT('bbb_welcome');
+$response = BigBlueButton::createMeetingArray($username,$meetingID,$bbb_welcome,$_moderatorPassword,$_attendeePassword, $salt, $url,$_logoutUrl);
+
+//Analyzes the bigbluebutton server's response
+
+if(!$response){//If the server is unreachable
+
+	$msg->addError("UNABLE_TO_CONNECT_TO_BBB");
+	
+}else if( $response['returncode'] == 'FAILED' ) { //The meeting was not created
+
+	if($response['messageKey'] == 'checksumError'){
+	
+		$msg->addError("CHECKSUM_ERROR_BBB");
+	}
+	else{
+	
+		$msg = $response['message'];
+	}
+}else{  //The meeting was created, and the user can now join
+
+	$bbb_joinURL = BigBlueButton::joinURL($meetingID,$username,"mp", $salt, $url);
+
+}
+
+$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$meetingID'";
+$result = mysql_query($sql, $db);
+
+if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
+
+	$savant->assign('result', $result);
+	$savant->assign('bbb_joinURL', $bbb_joinURL);
+	$savant->display('templates/index_instructor.tmpl.php');
+
+}else if(isset($_GET['edit'])){ 
+	while($row = mysql_fetch_assoc($result)){
+		$meeting_time = $row['course_timing'];
+		$course_message = $row['message'];
+	}
 	?>
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 
-    <table border="2" class="">
-        <tr>
-            <td>Course timing</td>
-            <td>Message</td>
-        </tr>
-        <tr>
-        <td><input type='hidden' name='create_classroom' value="checked"><input type="text" name="course_timing" /> </td>
-        <td><input type="text" name="course_message" /> </td>
-        
- 	    </tr>
-	</table>
-    <input type="submit" value="submit" name='submit_button'/>
+	<div class="input-form">
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
+	<input type='hidden' name='create_classroom' value="checked">
+		<dl>
+		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
+			<dd><input type="text" name="course_timing" id="time" value="<?php echo $meeting_time; ?>"/></dd>
+		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
+			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo $course_message; ?></textarea></dd>
+		</dl>
+
+    <input type="submit" value="<?php echo _AT('bbb_edit_meeting'); ?>" name='editthis'/>
     </form>
+    </div>
+<?php }else{ ?>
 
-	<?php
-	}
-	else 
-	{
-	//code for displaying result
-	echo "Welcome to BBB <br/>";
-	
- 	?> 
+	<div class="input-form">
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
- 		<table border="2" class="">
-         
- 		<?php 
-       		echo" <tr>
-                  <td>Course timing</td><td><input type='text' name='course_timing' value='$row[1]'  hidden/>$row[1]</td>
-                  </tr>
-             	  <tr>
-             	  <td>Message</td><td><input type='text' name='course_message' value='$row[2]'  hidden />$row[2]</td>
-                  </tr>       
-                "
-              
-  		?>      
-   
-		</table>
+	<input type='hidden' name='create_meeting' value="checked">
+		<dl>
+		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
+			<dd><input type="text" name="course_timing" id="time" /></dd>
+		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
+			<dd><textarea name="course_message" id="message" rows="2"  cols="20"></textarea></dd>
+		</dl>
 
-  		<input type="submit" value="Edit" name="Edit_button"/>
-		</form>
-		<?php 
-     }
-}
-
-    echo"</br><a href='$bbb_joinURL' target='_blank'>Click here</a> to go to BigBlueButtton classroom."    
-?> 
-
+    <input type="submit" value="<?php echo _AT('bbb_create_meeting'); ?>" name='create'/>
+    </form>
+    </div>
+    
+<?php } ?>
 <?php  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>
