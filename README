@@ -14,10 +14,12 @@ Installation:
 7) Enter the SALT security hash found in the BigBlueButton's bigbluebutton.properties file of your BigBlueButton installation. Look for the value of "beans.dynamicConferencceService.securitySalt". 
 8) BigBlueButton is successfully installed when it appears below the BigBlueButton Configuration area.
 
+
 How to use:-
 
 For Instructors
 ----------------
+<<<<<<< HEAD
 1) Login a an ATutor instructor
 2) Under the Manage tab when in a course, click on the BigBlueButton link.
 3) If a BigBlueButton meeting does not yet exist, the Create Meeting form will appear. Enter a meeting time and a meeting description and press the Create Meeting button.
@@ -32,4 +34,3 @@ For Students
 1) Click on the BigBlueButton tab at the top of the screen, or the BigBlueButton module link on the coure homepage, whichever is enabled for the course.
 2) On the screen that opens. click on the Join Conference link next to the meeting listed 
 3) A student can enter the meeting room at any point of the day even if no class is going on at that time.
-
