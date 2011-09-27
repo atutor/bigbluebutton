@@ -1,4 +1,5 @@
-# Readme for the ATutor BigBlueButton module #
+# Readme for the ATutor BigBlueButton module v.07 #
+# create with BBB 0.71 #
 
 Prerequisite:
 A functioning BigBlueButton server
@@ -19,7 +20,7 @@ How to use:-
 
 For Instructors
 ----------------
-<<<<<<< HEAD
+
 1) Login a an ATutor instructor
 2) Under the Manage tab when in a course, click on the BigBlueButton link.
 3) If a BigBlueButton meeting does not yet exist, the Create Meeting form will appear. Enter a meeting time and a meeting description and press the Create Meeting button.
@@ -34,3 +35,15 @@ For Students
 1) Click on the BigBlueButton tab at the top of the screen, or the BigBlueButton module link on the coure homepage, whichever is enabled for the course.
 2) On the screen that opens. click on the Join Conference link next to the meeting listed 
 3) A student can enter the meeting room at any point of the day even if no class is going on at that time.
+
+Todo
+----
+1. Extend module for multiple meetings per course (add a meeting_id field to the db)
+2. Add group BBB meetings
+3. Add record/playback meeting feature (available in BBB .8)
+4. Update time with select menus for choosing formated date/time
+5. Add a title field to the db for short description. Message can be used for a longer description
+6. Setup recordings
+
+Also see BBB-API-buddy
+https://github.com/omarshammas/bigbluebutton-API-Buddy

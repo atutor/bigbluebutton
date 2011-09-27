@@ -24,7 +24,7 @@
 				
 				<td><label for="n<?php echo $row['news_id']; ?>"><?php echo AT_print($row['message'], 'news.title'); ?></label></td>
 				<td><?php echo $row['course_timing']; ?></td>
-				<td><?php echo "<a href='".$this->bbb_joinURL."' target='_blank'>"._AT('bbb_join_conference'); ?></a></td>
+				<td><?php echo "<a href='".$this->bbb_joinURL."' target='_top'>"._AT('bbb_join_conference'); ?></a></td>
 			</tr>
 		<?php } while ($row = mysql_fetch_assoc($this->result)); ?>
 	<?php else: ?>

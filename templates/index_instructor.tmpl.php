@@ -1,3 +1,5 @@
+
+
 <form name="form" method="get" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <table class="data"  rules="cols">
 <colgroup>
@@ -30,9 +32,9 @@
 			
 				<td><input type="radio" name="aid" value="<?php echo $row['message']; ?>" id="n<?php echo $row['course_timing']; ?>" /></td>
 				
-				<td><label for="n<?php echo $row['news_id']; ?>"><?php echo AT_print($row['message'], 'news.title'); ?></label></td>
+				<td><label for="n<?php echo $row['news_id']; ?>"><?php echo htmlentities_utf8($row['message']); ?></label></td>
 				<td><?php echo $row['course_timing']; ?></td>
-				<td><?php echo "<a href='".$this->bbb_joinURL."' target='_blank'>"._AT('bbb_join_conference'); ?></a></td>
+				<td><?php echo "<a href='".$this->bbb_joinURL."' target='_top'>"._AT('bbb_join_conference'); ?></a></td>
 			</tr>
 		<?php } while ($row = mysql_fetch_assoc($this->result)); ?>
 	<?php else: ?>

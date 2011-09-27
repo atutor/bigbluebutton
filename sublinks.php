@@ -5,24 +5,25 @@
 /*                                                              */
 /* This module allows to search OpenLearn for educational       */
 /* content.														*/
-/* Author: Nishant Kumar										*/
+/* Author: Greg Gay										*/
 /* This program is free software. You can redistribute it and/or*/
 /* modify it under the terms of the GNU General Public License  */
 /* as published by the Free Software Foundation.				*/
 /****************************************************************/
 // $Id$
-define('AT_INCLUDE_PATH', '../../include/');
-require (AT_INCLUDE_PATH.'vitals.inc.php');
+if (!defined('AT_INCLUDE_PATH')) { exit; }
 
-$_custom_css = $_base_path . 'mods/bigbluebutton/module.css'; // use a custom stylesheet
-require (AT_INCLUDE_PATH.'header.inc.php');
+global $db;
+global $_base_href, $msg, $_config;
+$link_limit = 3;		// Number of links to be displayed on "detail view" box
+
 require_once("bbb_api_conf.php");
 require_once("bbb_api.php");
 
 $bbb_joinURL;
 $_moderatorPassword="mp";
 $_attendeePassword="ap";   
-$_logoutUrl= $_base_href.'mods/bigbluebutton/index.php';
+$_logoutUrl= $_base_href.'index.php';
 $username=get_login(intval($_SESSION["member_id"]));
 $meetingID=$_SESSION['course_id'];
 $bbb_welcome = _AT('bbb_welcome');
@@ -44,20 +45,26 @@ else if( $response['returncode'] == 'FAILED' ) { //The meeting was not created
 	}
 }
 else{//"The meeting was created, and the user will now be joined "
-	$bbb_joinURL = BigBlueButton::joinURL($meetingID,$username,"ap", $salt, $url,$_logoutUrl);
+	$bbb_joinURL = BigBlueButton::joinURL($meetingID,$username,"ap", $salt, $url);
 	
 }
-
-$_courseId=$_SESSION['course_id'];
  
-$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_courseId'";
+$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$meetingID'";
 $result = mysql_query($sql, $db);
 
-if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
-
-	$savant->assign('result', $result);
-	$savant->assign('bbb_joinURL', $bbb_joinURL);
-	$savant->display('templates/index.tmpl.php');
+if (mysql_num_rows($result) > 0) {
+	while ($row = mysql_fetch_assoc($result)) {
+		/****
+		* SUBLINK_TEXT_LEN, VALIDATE_LENGTH_FOR_DISPLAY are defined in include/lib/constance.lib.inc
+		* SUBLINK_TEXT_LEN determins the maxium length of the string to be displayed on "detail view" box.
+		*****/
+		$list[] = '<a href="'.$bbb_joinURL.'"'.
+		          (strlen(htmlentities_utf8($row['message'])) > SUBLINK_TEXT_LEN ? ' title="'.htmlentities_utf8($row['course_timing']).'"' : '') .' title="'.htmlentities_utf8($row['course_timing']).'">'. 
+		          validate_length(htmlentities_utf8($row['message']), SUBLINK_TEXT_LEN, VALIDATE_LENGTH_FOR_DISPLAY) .'</a>';
+	}
+	return $list;	
+} else {
+	return 0;
 }
 
- require (AT_INCLUDE_PATH.'footer.inc.php'); ?>
+?>

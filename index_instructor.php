@@ -17,6 +17,15 @@ define('AT_INCLUDE_PATH', '../../include/');
 
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
+
+// A hack to redirect student to the index.php file in the module
+// Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
+// Test again when bbb0.8 comes out.
+
+if(!$_SESSION['is_admin']){
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
+	exit;
+}
 authenticate(AT_PRIV_BIGBLUEBUTTON);
 
 
@@ -37,7 +46,7 @@ if (isset($_POST['submit_no'])) {
 // Create BBB Meeting
 
 if($_GET['create']){
-	if($_GET['course_timing'] !=''){
+	if($_GET['course_timing'] !='' && $_GET['course_message'] !=''){
 		$bbb_message = $addslashes($_GET['course_message']);
 		$bbb_meeting_time = $addslashes($_GET['course_timing']);
 		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('$_SESSION[course_id]','$bbb_meeting_time','$bbb_message ')";
@@ -51,13 +60,13 @@ if($_GET['create']){
 	}else{
 	
 			$msg->addError('TIME_REQUIRED_BBB');
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php?course_timing='.urlencode($stripslashes($_GET['course_timing'])).SEP.'course_message='.urlencode($stripslashes($_GET['course_message'])));
 			exit;
 	}
 // Update an existing BBB meeting
 
 } else if ($_GET['editthis']){
-	if($_GET['course_timing'] !=''){
+	if($_GET['course_timing'] !='' && $_GET['course_message'] !=''){
 		$bbb_message = $addslashes($_GET['course_message']);
 		$bbb_meeting_time = $addslashes($_GET['course_timing']);
 		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET message = '$bbb_message', course_timing = '$bbb_meeting_time' WHERE course_id = '$_SESSION[course_id]'";
@@ -70,14 +79,14 @@ if($_GET['create']){
 	}else{
 	
 			$msg->addError('TIME_REQUIRED_BBB');
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php?edit=1');
 			exit;
 	}
 }
 
 require (AT_INCLUDE_PATH.'header.inc.php');
-require "bbb_api_conf.php";
-require "bbb_api.php";
+require_once( "bbb_api_conf.php");
+require_once("bbb_api.php");
 
 // Confirm deleting a BBB meeting before actually deleting it.
 
@@ -100,6 +109,9 @@ $_logoutUrl= $_base_href.'mods/bigbluebutton/index_instructor.php';
 $username=get_login(intval($_SESSION['member_id']));
 $meetingID=$_SESSION['course_id'];
 $bbb_welcome = _AT('bbb_welcome');
+$salt = $_config['bbb_salt'];
+$url = $_config['bbb_url']."/bigbluebutton/";
+
 $response = BigBlueButton::createMeetingArray($username,$meetingID,$bbb_welcome,$_moderatorPassword,$_attendeePassword, $salt, $url,$_logoutUrl);
 
 //Analyzes the bigbluebutton server's response
@@ -134,9 +146,11 @@ if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
 	$savant->display('templates/index_instructor.tmpl.php');
 
 }else if(isset($_GET['edit'])){ 
+
+
 	while($row = mysql_fetch_assoc($result)){
 		$meeting_time = $row['course_timing'];
-		$course_message = $row['message'];
+		$course_message = htmlentities_utf8($row['message']);
 	}
 	?>
 
@@ -150,7 +164,7 @@ if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
 			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo $course_message; ?></textarea></dd>
 		</dl>
 
-    <input type="submit" value="<?php echo _AT('bbb_edit_meeting'); ?>" name='editthis'/>
+    <input type="submit" value="<?php echo _AT('bbb_edit_meeting'); ?>" name='editthis' class="button"/>
     </form>
     </div>
 <?php }else{ ?>
@@ -160,14 +174,15 @@ if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
 	<input type='hidden' name='create_meeting' value="checked">
 		<dl>
 		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
-			<dd><input type="text" name="course_timing" id="time" /></dd>
+			<dd><input type="text" name="course_timing" id="time" value="<?php echo urldecode($stripslashes($_GET['course_timing'])); ?>"/></dd>
 		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
-			<dd><textarea name="course_message" id="message" rows="2"  cols="20"></textarea></dd>
+			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo urldecode($stripslashes($_GET['course_message'])); ?></textarea></dd>
 		</dl>
 
-    <input type="submit" value="<?php echo _AT('bbb_create_meeting'); ?>" name='create'/>
+    <input type="submit" value="<?php echo _AT('bbb_create_meeting'); ?>" name='create' class="button"/>
     </form>
     </div>
-    
+
 <?php } ?>
+
 <?php  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

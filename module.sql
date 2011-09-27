@@ -28,5 +28,5 @@ INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_BBB_SETTINGS_FAILED'
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_UNABLE_TO_CONNECT_TO_BBB','Unable to join the meeting. Please check the url of the bigbluebutton server AND check to see if the bigbluebutton server is running.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_CHECKSUM_ERROR_BBB','A checksum error occured. Make sure you entered the correct salt.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_BBB_ACTION_FAILED','Failed to save meeting details.',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_TIME_REQUIRED_BBB','A meeting time is required.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_TIME_REQUIRED_BBB','All fields are required.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_CONFIRM_BBB_DELETE_CONFIRM','Are you sure you want to delete this meeting?',NOW(),'');
