@@ -4,16 +4,16 @@
     <description lang="en">This module enables you to conduct video lectures on BigBlueButton.</description> 
     <maintainers>
         <maintainer> 
-            <name>ATutor Team</name> 
-            <email>info@atutor.ca</email> 
+            <name>Nishant Kumar</name> 
+            <email>nishant1000@gmail.com</email> 
         </maintainer>
     </maintainers> 
-    <url>http://atutor.ca</url> 
+    <url>https://github.com/nishant1000/BigBlueButton-module-for-ATutor</url> 
     <license>BSD</license> 
 	<release> 
         <version>0.3</version> 
-        <date>2011-06-2</date> 
+        <date>2011-9-28</date> 
         <state>stable</state> 
-        <notes></notes> 
+        <notes>Requires a functioning BigBlueButton 1.7 server. Once installed and enabled, click on the BigBlueButton tab and enter the URL to the server installation, and the SALT security hash. See the readme for additional details.</notes> 
     </release> 
 </module>
