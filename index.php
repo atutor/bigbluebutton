@@ -16,10 +16,12 @@ require (AT_INCLUDE_PATH.'vitals.inc.php');
 
 $_custom_css = $_base_path . 'mods/bigbluebutton/module.css'; // use a custom stylesheet
 require (AT_INCLUDE_PATH.'header.inc.php');
-require_once("bbb_api_conf.php");
-require_once("bbb_api.php");
+require_once( "bbb_api_conf.php");
+require_once("bbb-api.php");
+$bbb = new BigBlueButton();
 
 $bbb_joinURL;
+$_courseId = $_SESSION['course_id'];
 $_moderatorPassword="mp";
 $_attendeePassword="ap";   
 $_logoutUrl= $_base_href.'mods/bigbluebutton/index.php';
@@ -27,8 +29,9 @@ $username=get_login(intval($_SESSION["member_id"]));
 $meetingID=$_SESSION['course_id'];
 $bbb_welcome = _AT('bbb_welcome');
 $salt = $_config['bbb_salt'];
-$url = $_config['bbb_url']."/bigbluebutton/";
+$url = $_config['bbb_url']."/bigbluebutton/";	
 
+/*
 $response = BigBlueButton::createMeetingArray($username,$meetingID,$bbb_welcome, $_moderatorPassword,$_attendeePassword, $salt, $url,$_logoutUrl);
 
 //Analyzes the bigbluebutton server's response
@@ -49,7 +52,9 @@ else{//"The meeting was created, and the user will now be joined "
 }
 
 $_courseId=$_SESSION['course_id'];
- 
+*/
+
+
 $sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_courseId'";
 $result = mysql_query($sql, $db);
 
@@ -57,7 +62,13 @@ if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
 
 	$savant->assign('result', $result);
 	$savant->assign('bbb_joinURL', $bbb_joinURL);
+	$savant->assign('bbb_recordURL', $bbb_recordURL);
 	$savant->display('templates/index.tmpl.php');
+/*
+	$savant->assign('result', $result);
+	$savant->assign('bbb_joinURL', $bbb_joinURL);
+	$savant->display('templates/index.tmpl.php');
+*/
 }
 
  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

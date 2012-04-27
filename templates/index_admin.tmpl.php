@@ -14,6 +14,7 @@
 <thead>
 <tr>
 	<th scope="col">&nbsp;</th>
+	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=message"><?php echo _AT('bbb_course_name'); ?></a></th>
 	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=message"><?php echo _AT('bbb_meeting_name'); ?></a></th>
 	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=message"><?php echo _AT('bbb_message'); ?></a></th>
 	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=course_timing"><?php echo _AT('bbb_meeting_time'); ?></a></th>
@@ -103,6 +104,7 @@
 				<td>
 				<input type="hidden" name="meetingId" value="<?php echo $row['meeting_id']; ?>" />
 				<input type="radio" name="aid" value="<?php echo $row['meeting_id']; ?>" id="<?php echo $row['meeting_id']; ?>" /></td>
+				<td><label for="<?php echo $row['meeting_id']; ?>"><?php echo get_course_title($row['course_id']); ?></label></td>
 				<td><label for="<?php echo $row['meeting_id']; ?>"><?php echo $row['course_name']; ?></label></td>
 				<td><?php echo htmlentities_utf8($row['message']); ?></td>
 				<td><?php echo $row['course_timing']; ?></td>

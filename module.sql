@@ -30,3 +30,27 @@ INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_CHECKSUM_ERROR_BBB',
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_BBB_ACTION_FAILED','Failed to save meeting details.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_TIME_REQUIRED_BBB','All fields are required.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_CONFIRM_BBB_DELETE_CONFIRM','Are you sure you want to delete this meeting?',NOW(),'');
+
+# New in V.04
+bbb_meeting_name
+bbb_create_edit_meeting
+bbb_record_conference
+bbb_recordings
+bbb_no_recording
+bbb_meeting_ended
+bbb_view_recording
+bbb_delete_recording 
+bbb_join_meeting_moderate
+bbb_view_meeting
+bbb_yes_join
+bbb_meeting_status
+bbb_course_name
+bbb_meeting_pending
+bbb_meeting_running
+bbb_meeting_over
+
+bbb_continue_yes = Do you wish to continue:
+bbb_continue_text = You are about to leave the ATutor environment and access the BigBlueButton video conferencing system, a Flash-based application. If you find you are unable to access the video conferencing system with your assistive technology, use your browsers back button, to back out of the system. Contact your instructor for details on how to access recordings of video conference meeting.</p>
+
+AT_FEEDBACK_MEETING_ENDED
+AT_FEEDBACK_NO_MEETINGS

@@ -5,7 +5,7 @@
 /*                                                              */
 /* This module allows to search OpenLearn for educational       */
 /* content.														*/
-/* Author: Nishant Kumar										*/
+/* Author: Nishant Kumar / Greg Gay										*/
 /* This program is free software. You can redistribute it and/or*/
 /* modify it under the terms of the GNU General Public License  */
 /* as published by the Free Software Foundation.				*/
@@ -29,160 +29,191 @@ if(!$_SESSION['is_admin']){
 authenticate(AT_PRIV_BIGBLUEBUTTON);
 
 
-// After confirming deleting a BBB meeting either delte it of return to the meeting list on cancel
+if(isset($_GET['delete'])){
+	if($_GET['meetingId'] == ''){
+		$msg->addError('SELECT_MEETING');
+	} else {
+		$confirm_delete = 'true';
+	}
+}
+////////////////////////
+// Initialize BigBlueButton
+require_once( "bbb_api_conf.php");
+require_once("bbb-api.php");
+$bbb = new BigBlueButton();
+
+if(isset($_GET['edit'])){ 
+	if($_GET['aid'] == ''){
+		$msg->addError('SELECT_MEETING');
+	}else{
+		header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/create_edit_meeting.php?meeting_id='.$_GET['aid']);
+		exit;
+	}
+}
+
+///////////////////////
+// End and existing meeting when the instructor logs out
+if($_SERVER['HTTP_REFERER'] == $_config['bbb_url']."/client/BigBlueButton.html"){
+	$meeting_id = intval($_GET['meeting_id']);
+	$endParams = array(
+		'meetingId' => $meeting_id, 	// REQUIRED - We have to know which meeting to end.
+		'password' => 'mp',				// REQUIRED - Must match moderator pass for meeting.
+	
+	);
+//debug($meeting_id);
+	$itsAllGood = true;
+	try {$result = $bbb->endMeetingWithXmlResponseArray($endParams);}
+		catch (Exception $e) {
+			echo 'Caught exception: ', $e->getMessage(), "\n";
+	
+			$itsAllGood = false;
+		}
+
+	if ($itsAllGood == true) {
+		// If it's all good, then we've interfaced with our BBB php api OK:
+		if ($result == null) {
+			// If we get a null response, then we're not getting any XML back from BBB.
+			echo "Failed to get any response. Maybe we can't contact the BBB server.";
+		}
+	}	
+	// Update the db to set the meeting to ended	
+	$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
+	$result = mysql_query($sql, $db);
+	
+		$msg->addFeedback('MEETING_ENDED');
+	
+}
+/////////////////////// end end meeting on logout
+
+////////////////////////
+// Delete BBB meeting after confirming
+$delete_meeting = intval($_GET['delete_meeting']);
+if(isset($_GET['delete_meeting'])) {
+	 require (AT_INCLUDE_PATH.'header.inc.php');
+
+	$hidden_vars['delete_id'] = $delete_meeting;
+	$hidden_vars['delete_confirmed'] = "yes";
+	$confirm = array('DELETE_RECORDING', $names_html);
+	$msg->addConfirm($confirm, $hidden_vars);
+	 $msg->printConfirm();
+	 
+	 require (AT_INCLUDE_PATH.'footer.inc.php');
+	 exit;
+}
+if($_POST['delete_confirmed'] == 'yes'){
+	$delete_id = intval($_POST['delete_id']);
+	$recordingsParams = array(
+		'meetingId' => $delete_id, 			// OPTIONAL - comma separate if multiples
+	
+	);
+
+	try {$result = $bbb->getRecordingsWithXmlResponseArray($recordingsParams);}
+		catch (Exception $e) {
+			echo 'Caught exception: ', $e->getMessage(), "\n";
+			$itsAllGood = false;
+		}
+		
+	$bbb_deleteURL = $result['0']['recordId'];
+	$recordingParams = array(
+		'recordId' => $bbb_deleteURL
+	);
+	$itsAllGood = true;
+	try {$result = $bbb->deleteRecordingsWithXmlResponseArray($recordingParams);}
+		catch (Exception $e) {
+			echo 'Caught exception: ', $e->getMessage(), "\n";
+			$itsAllGood = false;
+		}
+	
+	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+	exit;
+}	
+/////////////////////// End delete recording
+
+//////////////////////////
+// Delete meeting and any recordings associated with it
 
 if (isset($_POST['submit_no'])) {
 	$msg->addFeedback('CANCELLED');
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
 	exit;
 } else if (isset($_POST['submit_yes'])) {
-	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_SESSION[course_id]'";
+	$meetingId = intval($_POST['meetingId']);
+	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
 	$result = mysql_query($sql,$db);
+	
+	// delete any recordings for this meeting
+		$recordingParams = array(
+			'recordId' => $_POST['meetingId']
+		);
+		
+		// Delete the recording
+		$itsAllGood = true;
+		try {$result = $bbb->deleteRecordingsWithXmlResponseArray($recordingParams);}
+				catch (Exception $e) {
+				echo 'Caught exception: ', $e->getMessage(), "\n";
+				$itsAllGood = false;
+			}
+		
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
 	exit;
 }
 
-// Create BBB Meeting
-
-if($_GET['create']){
-	if($_GET['course_timing'] !='' && $_GET['course_message'] !=''){
-		$bbb_message = $addslashes($_GET['course_message']);
-		$bbb_meeting_time = $addslashes($_GET['course_timing']);
-		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('$_SESSION[course_id]','$bbb_meeting_time','$bbb_message ')";
-		if($result = mysql_query($sql,$db)){
-			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
-			exit;
-		}else{
-			$msg->addError('ACTION_FAILED');
-		}
-	}else{
-	
-			$msg->addError('TIME_REQUIRED_BBB');
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php?course_timing='.urlencode($stripslashes($_GET['course_timing'])).SEP.'course_message='.urlencode($stripslashes($_GET['course_message'])));
-			exit;
-	}
-// Update an existing BBB meeting
-
-} else if ($_GET['editthis']){
-	if($_GET['course_timing'] !='' && $_GET['course_message'] !=''){
-		$bbb_message = $addslashes($_GET['course_message']);
-		$bbb_meeting_time = $addslashes($_GET['course_timing']);
-		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET message = '$bbb_message', course_timing = '$bbb_meeting_time' WHERE course_id = '$_SESSION[course_id]'";
-	
-		if($result = mysql_query($sql, $db)){
-			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-		}else{
-			$msg->addError('BBB_ACTION_FAILED');
-		}
-	}else{
-	
-			$msg->addError('TIME_REQUIRED_BBB');
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php?edit=1');
-			exit;
-	}
-}
+///////////// END DELETE MEETING
 
 require (AT_INCLUDE_PATH.'header.inc.php');
-require_once( "bbb_api_conf.php");
-require_once("bbb_api.php");
 
 // Confirm deleting a BBB meeting before actually deleting it.
 
-if(isset($_GET['delete'])){
-	require_once(AT_INCLUDE_PATH . '/classes/Message/Message.class.php');
-	//global $savant;
-	$msg->addConfirm("BBB_DELETE_CONFIRM"); 
-	$msg->printConfirm();
+if(isset($_GET['delete']) && isset($confirm_delete)){
+
+	if($_GET['meetingId'] == ''){
+		$msg->addError('SELECT_MEETING');
+	}else {
+		$hidden_vars['meetingId'] = $_GET['meetingId'];
+		$msg->addConfirm("BBB_DELETE_CONFIRM", $hidden_vars); 
+		$msg->printConfirm();
+	}
 }
+/*
+	
+$itsAllGood = true;
+try {$response = $bbb->getMeetingsWithXmlResponseArray();}
+	catch (Exception $e) {
+		echo 'Caught exception: ', $e->getMessage(), "\n";
+		$itsAllGood = false;
+	}
 
-// Set some variables
-
-$bbb_joinURL;
+if ($itsAllGood == true) {
+	// If it's all good, then we've interfaced with our BBB php api OK:
+	if ($response == null) {
+		// If we get a null response, then we're not getting any XML back from BBB.
+		echo "Failed to get any response. Maybe we can't contact the BBB server.";
+	}	
+}
+*/
 $_courseId=$_SESSION['course_id'];
-$_courseTiming=$_POST['course_timing'];
-$_courseMessage=$_POST['course_message'];
-$_moderatorPassword="mp";
-$_attendeePassword="ap";   
-$_logoutUrl= $_base_href.'mods/bigbluebutton/index_instructor.php';
-$username=get_login(intval($_SESSION['member_id']));
-$meetingID=$_SESSION['course_id'];
-$bbb_welcome = _AT('bbb_welcome');
-$salt = $_config['bbb_salt'];
-$url = $_config['bbb_url']."/bigbluebutton/";
+//$bbb_meetingInfo = $response;
+$bbb_recordURL = $result['0']['playbackFormatUrl'];
+$bbb_deleteURL = $result['0']['recordId'];
 
-$response = BigBlueButton::createMeetingArray($username,$meetingID,$bbb_welcome,$_moderatorPassword,$_attendeePassword, $salt, $url,$_logoutUrl);
-
-//Analyzes the bigbluebutton server's response
-
-if(!$response){//If the server is unreachable
-
-	$msg->addError("UNABLE_TO_CONNECT_TO_BBB");
-	
-}else if( $response['returncode'] == 'FAILED' ) { //The meeting was not created
-
-	if($response['messageKey'] == 'checksumError'){
-	
-		$msg->addError("CHECKSUM_ERROR_BBB");
-	}
-	else{
-	
-		$msg = $response['message'];
-	}
-}else{  //The meeting was created, and the user can now join
-
-	$bbb_joinURL = BigBlueButton::joinURL($meetingID,$username,"mp", $salt, $url);
-
-}
-
-$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$meetingID'";
+$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_course_id'";
 $result = mysql_query($sql, $db);
 
-if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
+if(mysql_num_rows($result) != 0){
 
+	$savant->assign('bbb', $bbb);
 	$savant->assign('result', $result);
+	$savant->assign('response', $response);
 	$savant->assign('bbb_joinURL', $bbb_joinURL);
+	$savant->assign('bbb_recordURL', $bbb_recordURL);
+	$savant->assign('bbb_deleteURL', $bbb_deleteURL);
 	$savant->display('templates/index_instructor.tmpl.php');
 
-}else if(isset($_GET['edit'])){ 
+} else{
 
-
-	while($row = mysql_fetch_assoc($result)){
-		$meeting_time = $row['course_timing'];
-		$course_message = htmlentities_utf8($row['message']);
-	}
-	?>
-
-	<div class="input-form">
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
-	<input type='hidden' name='create_classroom' value="checked">
-		<dl>
-		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
-			<dd><input type="text" name="course_timing" id="time" value="<?php echo $meeting_time; ?>"/></dd>
-		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
-			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo $course_message; ?></textarea></dd>
-		</dl>
-
-    <input type="submit" value="<?php echo _AT('bbb_edit_meeting'); ?>" name='editthis' class="button"/>
-    </form>
-    </div>
-<?php }else{ ?>
-
-	<div class="input-form">
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
-	<input type='hidden' name='create_meeting' value="checked">
-		<dl>
-		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
-			<dd><input type="text" name="course_timing" id="time" value="<?php echo urldecode($stripslashes($_GET['course_timing'])); ?>"/></dd>
-		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
-			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo urldecode($stripslashes($_GET['course_message'])); ?></textarea></dd>
-		</dl>
-
-    <input type="submit" value="<?php echo _AT('bbb_create_meeting'); ?>" name='create' class="button"/>
-    </form>
-    </div>
-
-<?php } ?>
-
+	$msg->printFeedbacks('NO_MEETINGS');
+}
+?>
 <?php  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>
