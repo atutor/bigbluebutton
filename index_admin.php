@@ -15,11 +15,41 @@ define('AT_INCLUDE_PATH', '../../include/');
 require (AT_INCLUDE_PATH.'vitals.inc.php');
 admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON);
 
+
+
+require (AT_INCLUDE_PATH.'header.inc.php');
+global $_base_href;
+
+
+?>
+<h3><?php echo _AT('bbb_admin_setup');  ?> </h3><br />
+
+<div class="input-form" style="padding:.5em;">
+<p><?php echo _AT('bbb_config_text'); ?></p>
+
+<form name="form" action="<?php echo $_base_href; ?>mods/bigbluebutton/change_admin.php" method="post">
+<label for="url"><?php echo _AT('bbb_url'); ?></label><br />
+<input type="text" name="bbb_url" id="url" class="input" maxlength="60" size="40" value="<?php echo $_config['bbb_url']  ?>" /><br />
+<label for="url"><?php echo _AT('bbb_salt'); ?></label><br />
+<input type="text" name="bbb_salt" id="salt" maxlength="60" size="40"  value="<?php echo $_config['bbb_salt'];  ?>" /><br />
+<input type="submit" name="submit" value="<?php echo _AT('save'); ?>">
+</form>
+
+</div>
+<?php
+require_once( "config.php");
+if(CONFIG_SECURITY_SALT ==''){
+ $msg->printFeedbacks('NOT_CONFIGURED');
+ require (AT_INCLUDE_PATH.'footer.inc.php');
+ exit;
+}
+
 ////////////////////////
 // Initialize BigBlueButton
-require_once( "bbb_api_conf.php");
+
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();
+require_once("bbb_atutor.lib.php");
 
 if(isset($_GET['edit'])){ 
 	if($_GET['aid'] == ''){
@@ -48,6 +78,8 @@ if(isset($_GET['delete_meeting'])) {
 }
 if($_POST['delete_confirmed'] == 'yes'){
 	$delete_id = intval($_POST['delete_id']);
+	bbb_delete_meeting($delete_id);
+/*
 	$recordingsParams = array(
 		'meetingId' => $delete_id, 			// OPTIONAL - comma separate if multiples
 	
@@ -69,7 +101,7 @@ if($_POST['delete_confirmed'] == 'yes'){
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			$itsAllGood = false;
 		}
-	
+*/	
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
 	exit;
@@ -107,28 +139,6 @@ if (isset($_POST['submit_no'])) {
 }
 
 ///////////// END DELETE MEETING
-
-require (AT_INCLUDE_PATH.'header.inc.php');
-global $_base_href;
-
-
-?>
-<h3><?php echo _AT('bbb_admin_setup');  ?> </h3><br />
-
-<div class="input-form" style="padding:.5em;">
-<p><?php echo _AT('bbb_config_text'); ?></p>
-
-<form name="form" action="<?php echo $_base_href; ?>mods/bigbluebutton/change_admin.php" method="post">
-<label for="url"><?php echo _AT('bbb_url'); ?></label><br />
-<input type="text" name="bbb_url" id="url" class="input" maxlength="60" size="40" value="<?php echo $_config['bbb_url']  ?>" /><br />
-<label for="url"><?php echo _AT('bbb_salt'); ?></label><br />
-<input type="text" name="bbb_salt" id="salt" maxlength="60" size="40"  value="<?php echo $_config['bbb_salt']  ?>" /><br />
-<input type="submit" name="submit" value="<?php echo _AT('save'); ?>">
-</form>
-
-</div>
-<?php
-
 
 $bbb_recordURL = $result['0']['playbackFormatUrl'];
 $bbb_deleteURL = $result['0']['recordId'];

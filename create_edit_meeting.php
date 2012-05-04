@@ -39,11 +39,14 @@ if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_ADMI
 
 
 if($_GET['create']){
+//debug($_GET);
 	if($_GET['course_time'] !='' && $_GET['course_message'] !=''){
 		$bbb_meeting_name = $addslashes($_GET['course_name']);
 		$bbb_message = $addslashes($_GET['course_message']);
 		$bbb_meeting_time = $addslashes($_GET['course_time']);
+		
 		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('','$_SESSION[course_id]','$bbb_meeting_name', '$bbb_meeting_time','$bbb_message ','1')";
+		
 		if($result = mysql_query($sql,$db)){
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 			if($_SESSION['is_admin']){
@@ -71,6 +74,7 @@ if($_GET['create']){
 		$bbb_message = $addslashes($_GET['course_message']);
 		$bbb_meeting_time = $addslashes($_GET['course_time']);
 		$bbb_meeting_status = intval($_GET['meeting_status']);
+		
 		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET course_name = '$bbb_meeting_name', message = '$bbb_message', course_timing = '$bbb_meeting_time', status = '$bbb_meeting_status' WHERE meeting_id = '$_GET[meeting_id]'";
 	
 		if($result = mysql_query($sql, $db)){
@@ -94,9 +98,9 @@ if($_GET['create']){
 <?php
 
 if(isset($_GET['meeting_id'])){ 
-$meeting_id = intval($_GET['meeting_id']);
-$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meeting_id'";
-$result = mysql_query($sql, $db);
+	$meeting_id = intval($_GET['meeting_id']);
+	$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meeting_id'";
+	$result = mysql_query($sql, $db);
 
 	while($row = mysql_fetch_assoc($result)){
 		$meeting_id  = $row['meeting_id'];
@@ -104,13 +108,14 @@ $result = mysql_query($sql, $db);
 		$meeting_time = $row['course_timing'];
 		$meeting_status = $row['status'];
 		$course_message = htmlentities_utf8($row['message']);
-		debug($meeting_status);
+		//debug($meeting_status);
 	}
 	?>
 
 	<div class="input-form">
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 	<input type='hidden' name='create_classroom' value="checked">
+
 		<input type='hidden' name='meeting_id' value="<?php echo $meeting_id; ?>">
 		<dl>
 		<dt><label for="meeting_name"><?php echo _AT('bbb_meeting_name'); ?></label></dt>
@@ -118,7 +123,7 @@ $result = mysql_query($sql, $db);
 		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
 			<dd><input type="text" name="course_time" id="time" value="<?php echo $meeting_time; ?>"/></dd>
 		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
-			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo $course_message; ?></textarea></dd>
+			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo htmlentities_utf8($course_message); ?></textarea></dd>
 			
 		<dt><label for="time"><?php echo _AT('bbb_meeting_status'); ?></label></dt>
 			<dd><select name="meeting_status">
@@ -137,6 +142,7 @@ $result = mysql_query($sql, $db);
 	<div class="input-form">
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 	<input type='hidden' name='create_meeting' value="checked">
+	<input type='hidden' name='meeting_status' value="1">
 		<dl>
 		<dt><label for="meeting_name"><?php echo _AT('bbb_meeting_name'); ?></label></dt>
 			<dd><input type="text" name="course_name" id="meeting_name" value="<?php echo urldecode($stripslashes($_GET['course_name'])); ?>"/></dd>

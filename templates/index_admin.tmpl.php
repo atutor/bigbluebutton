@@ -25,7 +25,7 @@
 </thead>
 <tfoot>
 <tr>
-	<td colspan="7"><input type="submit" name="edit" value="<?php echo _AT('edit'); ?>" class="button"/> <input type="submit" name="delete" value="<?php echo _AT('delete'); ?>"  class="button"/></td>
+	<td colspan="8"><input type="submit" name="edit" value="<?php echo _AT('edit'); ?>" class="button"/> <input type="submit" name="delete" value="<?php echo _AT('delete'); ?>"  class="button"/></td>
 </tr>
 </tfoot>
 <tbody>

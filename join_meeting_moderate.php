@@ -26,24 +26,13 @@ require (AT_INCLUDE_PATH . 'vitals.inc.php');
 //	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
 //	exit;
 //}
-if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
-	//alls well
-}else{
-	require (AT_INCLUDE_PATH.'header.inc.php'); 
-	$msg->printInfos('NO_PERMISSION');
-	require (AT_INCLUDE_PATH.'footer.inc.php'); 
-	exit;
-}
-require (AT_INCLUDE_PATH.'header.inc.php'); 
-//debug($_REQUEST);
-
 ////////////////////////
 // Initialize BigBlueButton
-require_once( "bbb_api_conf.php");
+require_once( "config.php");
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();
-
-$bbb_joinURL;
+require("bbb_atutor.lib.php");
+//$bbb_joinURL;
 
 
 $_courseId=$_SESSION['course_id'];
@@ -60,20 +49,55 @@ if($_SESSION['course_id'] == "-1"){
 
 $meetingID=$_GET['meetingId'];
 $bbb_welcome = _AT('bbb_welcome');
-$salt = $_config['bbb_salt'];
-$url = $_config['bbb_url']."/bigbluebutton/";
-//debug($url);
-?>
-<div>
-<p><?php echo _AT('bbb_continue_text'); ?></p>
-
-<?php
+if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
+	//alls well
+}else{
+	require (AT_INCLUDE_PATH.'header.inc.php'); 
+	$msg->printInfos('NO_PERMISSION');
+	require (AT_INCLUDE_PATH.'footer.inc.php'); 
+	exit;
+}
 if(isset($_GET['record'])){
-	$record = 'true';
+	// Check to see if max recordings has been reached
+	$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_courseId'";
+	$result = mysql_query($sql,$db);
+	$this_recordings = '';
+	$recordings = '0';
+	while($row = mysql_fetch_assoc($result)){
+
+		$this_recording = bbb_get_recordings($row['meeting_id']);
+		if(preg_match("/http/",$this_recording)){
+			$recordings = ($recordings+1);
+		}
+	}
+	if($recordings >= BBB_MAX_RECORDINGS){
+		$record = 'false';
+		$msg->addInfo("MAX_REACHED");
+	}else{
+		// If not max recording reached, allow to record meeting
+		$record = 'true';
+	}
 }else{
 	$record = 'false';
 }
 
+require (AT_INCLUDE_PATH.'header.inc.php'); 
+//debug($_REQUEST);
+
+
+//$salt = $_config['bbb_salt'];
+//$url = $_config['bbb_url']."/bigbluebutton/";
+//debug($_SERVER['HTTP_HOST']);
+?>
+<div>
+<p style="border:1px solid #cccccc; padding:1em;border-radius:.3em;background-color:#eeeeee;"><?php echo _AT('bbb_continue_text'); ?></p>
+
+<?php
+
+$bbb_joinURL = bbb_join_meeting_moderate($_attendeePassword,$_moderatorPassword,$_logoutUrl,$meetingID, $record, $username);
+
+
+/*
 	// If recording
 	$creationParams = array(
 		'meetingId' => $meetingID, 					// REQUIRED
@@ -123,7 +147,7 @@ if(isset($_GET['record'])){
 			echo 'Caught exception2: ', $e->getMessage(), "\n";
 			$itsAllGood = false;
 		}
-
+*/
 ?>
 <p> <?php echo _AT('bbb_continue_yes'); ?>  <a href="<?php echo $bbb_joinURL;?>"><?php echo _AT('bbb_yes_join');  ?></a> <?php echo _AT('or'); ?> <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>"><?php echo _AT('bbb_no_cancel');  ?></a>
 

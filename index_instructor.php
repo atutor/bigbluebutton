@@ -38,9 +38,12 @@ if(isset($_GET['delete'])){
 }
 ////////////////////////
 // Initialize BigBlueButton
-require_once( "bbb_api_conf.php");
+require_once("config.php");
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();
+require("bbb_atutor.lib.php");
+
+////////
 
 if(isset($_GET['edit'])){ 
 	if($_GET['aid'] == ''){
@@ -53,81 +56,53 @@ if(isset($_GET['edit'])){
 
 ///////////////////////
 // End and existing meeting when the instructor logs out
-if($_SERVER['HTTP_REFERER'] == $_config['bbb_url']."/client/BigBlueButton.html"){
-	$meeting_id = intval($_GET['meeting_id']);
-	$endParams = array(
-		'meetingId' => $meeting_id, 	// REQUIRED - We have to know which meeting to end.
-		'password' => 'mp',				// REQUIRED - Must match moderator pass for meeting.
-	
-	);
-//debug($meeting_id);
-	$itsAllGood = true;
-	try {$result = $bbb->endMeetingWithXmlResponseArray($endParams);}
-		catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-	
-			$itsAllGood = false;
-		}
 
-	if ($itsAllGood == true) {
-		// If it's all good, then we've interfaced with our BBB php api OK:
-		if ($result == null) {
-			// If we get a null response, then we're not getting any XML back from BBB.
-			echo "Failed to get any response. Maybe we can't contact the BBB server.";
-		}
-	}	
+if($_SERVER['HTTP_REFERER'] == $_config['bbb_url']."/client/BigBlueButton.html"){
+
+	$meeting_id = $_GET['meeting_id'];
+	$modpwd = "mp";
+	$shortMeetingIdArray = preg_split('/-/', $meeting_id);
+	$shortMeetingId = $shortMeetingIdArray['1'];
+	
+	bbb_end_meeting($meeting_id,$modpwd);
+	
+	global $response;
 	// Update the db to set the meeting to ended	
-	$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
+	$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$shortMeetingId'";
 	$result = mysql_query($sql, $db);
-	
-		$msg->addFeedback('MEETING_ENDED');
-	
+	$msg->addFeedback('MEETING_ENDED');
 }
 /////////////////////// end end meeting on logout
 
 ////////////////////////
-// Delete BBB meeting after confirming
-$delete_meeting = intval($_GET['delete_meeting']);
-if(isset($_GET['delete_meeting'])) {
-	 require (AT_INCLUDE_PATH.'header.inc.php');
-
-	$hidden_vars['delete_id'] = $delete_meeting;
-	$hidden_vars['delete_confirmed'] = "yes";
-	$confirm = array('DELETE_RECORDING', $names_html);
-	$msg->addConfirm($confirm, $hidden_vars);
-	 $msg->printConfirm();
-	 
-	 require (AT_INCLUDE_PATH.'footer.inc.php');
-	 exit;
-}
-if($_POST['delete_confirmed'] == 'yes'){
-	$delete_id = intval($_POST['delete_id']);
-	$recordingsParams = array(
-		'meetingId' => $delete_id, 			// OPTIONAL - comma separate if multiples
+// Delete BBB meeting recording after confirming
+if($_GET['delete_meeting'] > "0"){
+	$delete_meeting = intval($_GET['delete_meeting']);
+	//echo $delete_meeting;
+	if(isset($_GET['delete_meeting'])) {
+		 require (AT_INCLUDE_PATH.'header.inc.php');
 	
-	);
+		$hidden_vars['delete_id'] = $delete_meeting;
+		$hidden_vars['delete_confirmed'] = "yes";
+		$confirm = array('DELETE_RECORDING', $names_html);
+		$msg->addConfirm($confirm, $hidden_vars);
+		$msg->printConfirm();
+		 
+		 require (AT_INCLUDE_PATH.'footer.inc.php');
+		 exit;
+	}
+}
 
-	try {$result = $bbb->getRecordingsWithXmlResponseArray($recordingsParams);}
-		catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
-		
-	$bbb_deleteURL = $result['0']['recordId'];
-	$recordingParams = array(
-		'recordId' => $bbb_deleteURL
-	);
-	$itsAllGood = true;
-	try {$result = $bbb->deleteRecordingsWithXmlResponseArray($recordingParams);}
-		catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
+if($_POST['delete_confirmed'] == 'yes'){
+	$delete_id = $_POST['delete_id'];
+	
+	bbb_delete_meeting($delete_id);
 	
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
 	exit;
 }	
+
 /////////////////////// End delete recording
 
 //////////////////////////
@@ -139,22 +114,12 @@ if (isset($_POST['submit_no'])) {
 	exit;
 } else if (isset($_POST['submit_yes'])) {
 	$meetingId = intval($_POST['meetingId']);
+
+	bbb_delete_meeting($meetingId);
+
 	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
 	$result = mysql_query($sql,$db);
 	
-	// delete any recordings for this meeting
-		$recordingParams = array(
-			'recordId' => $_POST['meetingId']
-		);
-		
-		// Delete the recording
-		$itsAllGood = true;
-		try {$result = $bbb->deleteRecordingsWithXmlResponseArray($recordingParams);}
-				catch (Exception $e) {
-				echo 'Caught exception: ', $e->getMessage(), "\n";
-				$itsAllGood = false;
-			}
-		
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
 	exit;
@@ -176,25 +141,8 @@ if(isset($_GET['delete']) && isset($confirm_delete)){
 		$msg->printConfirm();
 	}
 }
-/*
-	
-$itsAllGood = true;
-try {$response = $bbb->getMeetingsWithXmlResponseArray();}
-	catch (Exception $e) {
-		echo 'Caught exception: ', $e->getMessage(), "\n";
-		$itsAllGood = false;
-	}
 
-if ($itsAllGood == true) {
-	// If it's all good, then we've interfaced with our BBB php api OK:
-	if ($response == null) {
-		// If we get a null response, then we're not getting any XML back from BBB.
-		echo "Failed to get any response. Maybe we can't contact the BBB server.";
-	}	
-}
-*/
 $_courseId=$_SESSION['course_id'];
-//$bbb_meetingInfo = $response;
 $bbb_recordURL = $result['0']['playbackFormatUrl'];
 $bbb_deleteURL = $result['0']['recordId'];
 
@@ -205,7 +153,6 @@ if(mysql_num_rows($result) != 0){
 
 	$savant->assign('bbb', $bbb);
 	$savant->assign('result', $result);
-	$savant->assign('response', $response);
 	$savant->assign('bbb_joinURL', $bbb_joinURL);
 	$savant->assign('bbb_recordURL', $bbb_recordURL);
 	$savant->assign('bbb_deleteURL', $bbb_deleteURL);
@@ -215,5 +162,9 @@ if(mysql_num_rows($result) != 0){
 
 	$msg->printFeedbacks('NO_MEETINGS');
 }
+
+
 ?>
+
+
 <?php  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

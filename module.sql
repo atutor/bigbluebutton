@@ -1,11 +1,14 @@
-# sql file for bigbluebutton module
+# sql file for bigbluebutton module v0.4
 
 CREATE TABLE `bigbluebutton` (
-   `course_id` VARCHAR( 15 ) NOT NULL,
-   `course_timing` VARCHAR( 15 ) NOT NULL,
-   `message` TEXT NOT NULL,
-   PRIMARY KEY ( `course_id` )
-);
+  `meeting_id` tinyint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `course_id` tinyint(8) unsigned NOT NULL,
+  `course_name` varchar(155) NOT NULL,
+  `course_timing` varchar(15) NOT NULL,
+  `message` text NOT NULL,
+  `status` tinyint(1) unsigned NOT NULL,
+  PRIMARY KEY (`meeting_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 INSERT INTO `language_text` VALUES ('en', '_module','bigbluebutton','BigBlueButton',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bigbluebutton_text','A sample BBB text for detailed homepage.',NOW(),'');
@@ -32,25 +35,32 @@ INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_TIME_REQUIRED_BBB','
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_CONFIRM_BBB_DELETE_CONFIRM','Are you sure you want to delete this meeting?',NOW(),'');
 
 # New in V.04
-bbb_meeting_name
-bbb_create_edit_meeting
-bbb_record_conference
-bbb_recordings
-bbb_no_recording
-bbb_meeting_ended
-bbb_view_recording
-bbb_delete_recording 
-bbb_join_meeting_moderate
-bbb_view_meeting
-bbb_yes_join
-bbb_meeting_status
-bbb_course_name
-bbb_meeting_pending
-bbb_meeting_running
-bbb_meeting_over
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_name','Meeting Title',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_create_edit_meeting','Create/Edit Meeting',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_record_conference','Record Conference',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_recordings','Recordings',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_no_recording','No Recordings',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_ended','Ended',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_view_recording','View Recording',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_delete_recording','Delete Recording',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_join_meeting_moderate','Join as Moderator',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_join_meeting','Join as Meeting',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_view_meeting','View Meeting',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_yes_join','Yes, Join',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_no_cancel','No, Cancel',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_status','Status',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_course_name','Course Title',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_pending','Pending',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_running','Running',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_over','Ended',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_continue_yes','Do you wish to continue:',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_continue_text','You are about to leave ATutor and access the BigBlueButton video conferencing system, a Flash-based application. If you find you are unable to access the video conferencing system with your assistive technology, use your browser back button, to back out of the system. Contact your instructor for details on how to access recordings of video conference meeting.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_no_meeting','This meeting has not started yet. It will become available when the moderator logs in. Check back here at the scheduled meeting time.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_MEETING_ENDED','Meeting has been ended. To re-enable choose the radio button for the meeting and press edit, then in the Status menu choose Pending. Recordings may take a while to process before becoming available, if enabled for this meeting.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_NO_MEETINGS','No meetings are yet available.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_CONFIRM_DELETE_RECORDING','Are you sure you want to delete this recording?',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_SELECT_MEETING','Now meeting was selected.',NOW(),'');
 
-bbb_continue_yes = Do you wish to continue:
-bbb_continue_text = You are about to leave the ATutor environment and access the BigBlueButton video conferencing system, a Flash-based application. If you find you are unable to access the video conferencing system with your assistive technology, use your browsers back button, to back out of the system. Contact your instructor for details on how to access recordings of video conference meeting.</p>
 
-AT_FEEDBACK_MEETING_ENDED
-AT_FEEDBACK_NO_MEETINGS
+
+

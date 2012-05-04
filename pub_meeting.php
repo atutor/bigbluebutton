@@ -33,14 +33,24 @@ require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require_once("bbb_atutor.lib.php");
 
-$meeting_id = intval($_GET['view_meeting']);
+if($_GET['publish'] == "yes"){
+
+$meeting_id = intval($_GET['meetingid']);
+$meeting_recording = bbb_get_recordings($meeting_id);
+$recordId = split( "=",$meeting_recording);
+debug($recordId['1']);
+$meeting_info = bbb_get_meeting_info($meeting_id);
+$published =  bbb_publish_meeting($recordId['1']);
+debug($published);
+
+//bbb_publish_meeting($recordId)
+}
+
+$meeting_id = intval($_GET['pub_meeting']);
 $bbb_recordURL = bbb_get_recordings($meeting_id); 
-debug($bbb_recordURL);
+
 require (AT_INCLUDE_PATH.'header.inc.php'); 
 ?>
-
-<iframe src="<?php echo $bbb_recordURL; ?>" height="800px" width="100%" frameborder="0" scrolling="no" style="border:1px solid #cccccc; padding:1em;border-radius:.3em;">
-
-</iframe>
+Yes <a href="<?php echo $_SERVER['PHP_SELF']; ?>?meetingid=<?php echo $meeting_id; ?>&publish=yes"><?php echo _AT('bbb_publish'); ?> </a>
 
 <?php  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>
