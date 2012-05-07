@@ -2,6 +2,7 @@
 
 function bbb_end_meeting($meeting_id, $modpwd){
 	global $bbb;
+	//debug($meeting_id);
 	$endParams = array(
 		'meetingId' => $_SERVER['HTTP_HOST'].'-'.$meeting_id, //REQUIRED - We have to know which meeting to end.
 		'password' => $modpwd	//REQUIRED - Must match moderator pass for meeting.
@@ -109,7 +110,7 @@ function bbb_create_meeting($_attendeePassword,$_moderatorPassword,$_logoutUrl,$
 		'dialNumber' => '', 						// The main number to call into. Optional.
 		'voiceBridge' => '', 						// PIN to join voice. Optional.
 		'webVoice' => '', 							// Alphanumeric to join voice. Optional.
-		'logoutUrl' => $_logoutUrl."?meeting_id=".$meetingID, // Default in bigbluebutton.properties. Optional.
+		'logoutUrl' => $_logoutUrl."?meeting_id=".$meetingID.SEP.'mod='.$username, // Default in bigbluebutton.properties. Optional.
 		'maxParticipants' => '-1', 				// Optional. -1 = unlimitted. Not supported in BBB. [number]
 		'record' => $record, 					// New. 'true' will tell BBB to record the meeting.
 		'duration' => '0', 						// Default = 0 which means no set duration in minutes. [number]
@@ -206,4 +207,21 @@ function bbb_publish_meeting($recordId){
 		print_r($result);
 	}
 }
+function bbb_is_meeting_running($meetingId){
+	global $bbb;
+	$itsAllGood = true;
+	$meetingId = $_SERVER['HTTP_HOST'].'-'.$meetingId;
+	try {$response = $bbb->isMeetingRunningWithXmlResponseArray($meetingId);}
+		catch (Exception $e) {
+			echo 'Caught exception: ', $e->getMessage(), "\n";
+			$itsAllGood = false;
+		}
+	
+	if ($itsAllGood == true) {
+		//Output results to see what we're getting:
+		//debug($response);
+	}
+	return $response;
+}
+
 ?>

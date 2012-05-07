@@ -10,7 +10,7 @@ salt: 8cd8ef52e8e101574e400365b55e11a6
 define('BBB_MAX_RECORDINGS', '1');
 
 if($_config['bbb_salt'] =='' || !isset($_config['bbb_salt'])){
-$hide_salt = file_get_contents('https://stage.atutorspaces.com/include/bbb_salt.php');
+$hide_salt = file_get_contents('https://www.atutorspaces.com/include/bbb_salt.php');
 
 // change this to the salt for the bbb host server
 	$salt = $hide_salt;

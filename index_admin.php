@@ -15,28 +15,6 @@ define('AT_INCLUDE_PATH', '../../include/');
 require (AT_INCLUDE_PATH.'vitals.inc.php');
 admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON);
 
-
-
-require (AT_INCLUDE_PATH.'header.inc.php');
-global $_base_href;
-
-
-?>
-<h3><?php echo _AT('bbb_admin_setup');  ?> </h3><br />
-
-<div class="input-form" style="padding:.5em;">
-<p><?php echo _AT('bbb_config_text'); ?></p>
-
-<form name="form" action="<?php echo $_base_href; ?>mods/bigbluebutton/change_admin.php" method="post">
-<label for="url"><?php echo _AT('bbb_url'); ?></label><br />
-<input type="text" name="bbb_url" id="url" class="input" maxlength="60" size="40" value="<?php echo $_config['bbb_url']  ?>" /><br />
-<label for="url"><?php echo _AT('bbb_salt'); ?></label><br />
-<input type="text" name="bbb_salt" id="salt" maxlength="60" size="40"  value="<?php echo $_config['bbb_salt'];  ?>" /><br />
-<input type="submit" name="submit" value="<?php echo _AT('save'); ?>">
-</form>
-
-</div>
-<?php
 require_once( "config.php");
 if(CONFIG_SECURITY_SALT ==''){
  $msg->printFeedbacks('NOT_CONFIGURED');
@@ -55,7 +33,7 @@ if(isset($_GET['edit'])){
 	if($_GET['aid'] == ''){
 		$msg->addError('SELECT_MEETING');
 	}else{
-		header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/create_edit_meeting.php?meeting_id='.$_GET['aid']);
+		header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/create_edit_meeting_admin.php?meeting_id='.$_GET['aid']);
 		exit;
 	}
 }
@@ -63,49 +41,34 @@ if(isset($_GET['edit'])){
 
 ////////////////////////
 // Delete BBB meeting after confirming
-$delete_meeting = intval($_GET['delete_meeting']);
-if(isset($_GET['delete_meeting'])) {
-	 require (AT_INCLUDE_PATH.'header.inc.php');
-
-	$hidden_vars['delete_id'] = $delete_meeting;
-	$hidden_vars['delete_confirmed'] = "yes";
-	$confirm = array('DELETE_RECORDING', $names_html);
-	$msg->addConfirm($confirm, $hidden_vars);
-	 $msg->printConfirm();
-	 
-	 require (AT_INCLUDE_PATH.'footer.inc.php');
-	 exit;
-}
-if($_POST['delete_confirmed'] == 'yes'){
-	$delete_id = intval($_POST['delete_id']);
-	bbb_delete_meeting($delete_id);
-/*
-	$recordingsParams = array(
-		'meetingId' => $delete_id, 			// OPTIONAL - comma separate if multiples
+if($_GET['delete_meeting'] > "0"){
+	$delete_meeting = intval($_GET['delete_meeting']);
+	//echo $delete_meeting;
+	require (AT_INCLUDE_PATH.'header.inc.php');
+	if(isset($_GET['delete_meeting'])) {
+		// require (AT_INCLUDE_PATH.'header.inc.php');
 	
-	);
+		$hidden_vars['delete_id'] = $delete_meeting;
+		$hidden_vars['delete_confirmed'] = "yes";
+		$confirm = array('DELETE_RECORDING', $names_html);
+		$msg->addConfirm($confirm, $hidden_vars);
+		$msg->printConfirm();
+		 
+		 require (AT_INCLUDE_PATH.'footer.inc.php');
+		 exit;
+	}
+}
 
-	try {$result = $bbb->getRecordingsWithXmlResponseArray($recordingsParams);}
-		catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
-		
-	$bbb_deleteURL = $result['0']['recordId'];
-	$recordingParams = array(
-		'recordId' => $bbb_deleteURL
-	);
-	$itsAllGood = true;
-	try {$result = $bbb->deleteRecordingsWithXmlResponseArray($recordingParams);}
-		catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
-*/	
+if($_POST['delete_confirmed'] == 'yes'){
+	$delete_id = $_POST['delete_id'];
+	
+	bbb_delete_meeting($delete_id);
+	
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 	exit;
 }	
+
 /////////////////////// End delete recording
 
 //////////////////////////
@@ -144,6 +107,27 @@ $bbb_recordURL = $result['0']['playbackFormatUrl'];
 $bbb_deleteURL = $result['0']['recordId'];
 
 
+require (AT_INCLUDE_PATH.'header.inc.php');
+global $_base_href;
+
+
+?>
+<h3><?php echo _AT('bbb_admin_setup');  ?> </h3><br />
+
+<div class="input-form" style="padding:.5em;">
+<p><?php echo _AT('bbb_config_text'); ?></p>
+
+<form name="form" action="<?php echo $_base_href; ?>mods/bigbluebutton/change_admin.php" method="post">
+<label for="url"><?php echo _AT('bbb_url'); ?></label><br />
+<input type="text" name="bbb_url" id="url" class="input" maxlength="60" size="40" value="<?php echo $_config['bbb_url']  ?>" /><br />
+<label for="url"><?php echo _AT('bbb_salt'); ?></label><br />
+<input type="text" name="bbb_salt" id="salt" maxlength="60" size="40"  value="<?php echo $_config['bbb_salt'];  ?>" /><br />
+<input type="submit" name="submit" value="<?php echo _AT('save'); ?>">
+</form>
+
+</div>
+
+<?php
 $sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton";
 $result = mysql_query($sql, $db);
 

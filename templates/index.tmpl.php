@@ -76,17 +76,18 @@
 	$bbb_recordURL = bbb_get_recordings($row['meeting_id']);
 	////////////////////
 	// Set the meeting status 
-		if($response[$i]['meetingId'] == $row['meeting_id']){
-			if($this->response[$i]['running'] == "true"){
+	$response = bbb_is_meeting_running($row['meeting_id']);
+
+			if($response['running'] == "true"){
+
 				$meeting_status = "running";		
-			} else if ($response[$i]['running'] == "false"){
+			} else if ($this->response[$i]['running'] == "false"){
+
 				$meeting_status = "ended";
-			}
-				
-		} else {
+			}else{
+
 			$meeting_status = "pending";
-			
-		}
+			}
 			
 	?>
 		

@@ -3,9 +3,7 @@
 /* BigBlueButton module for ATutor                              */
 /* https://github.com/nishant1000/BigBlueButton-module-for-ATutor*/
 /*                                                              */
-/* This module allows to search OpenLearn for educational       */
-/* content.														*/
-/* Author: Nishant Kumar / Greg Gay										*/
+/* Author: Nishant Kumar / Greg Gay								*/
 /* This program is free software. You can redistribute it and/or*/
 /* modify it under the terms of the GNU General Public License  */
 /* as published by the Free Software Foundation.				*/
@@ -21,11 +19,18 @@ require (AT_INCLUDE_PATH . 'vitals.inc.php');
 // A hack to redirect student to the index.php file in the module
 // Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
 // Test again when bbb0.8 comes out.
+//debug($_SESSION);
+//exit;
+if($_SESSION['course_id'] == -1){
 
-if(!$_SESSION['is_admin']){
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
+	exit;
+}else if(!$_SESSION['is_admin']){
+
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
 	exit;
 }
+
 authenticate(AT_PRIV_BIGBLUEBUTTON);
 
 
@@ -61,14 +66,14 @@ if($_SERVER['HTTP_REFERER'] == $_config['bbb_url']."/client/BigBlueButton.html")
 
 	$meeting_id = $_GET['meeting_id'];
 	$modpwd = "mp";
-	$shortMeetingIdArray = preg_split('/-/', $meeting_id);
-	$shortMeetingId = $shortMeetingIdArray['1'];
+	//$shortMeetingIdArray = preg_split('/-/', $meeting_id);
+	//$shortMeetingId = $shortMeetingIdArray['1'];
 	
 	bbb_end_meeting($meeting_id,$modpwd);
 	
 	global $response;
 	// Update the db to set the meeting to ended	
-	$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$shortMeetingId'";
+	$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
 	$result = mysql_query($sql, $db);
 	$msg->addFeedback('MEETING_ENDED');
 }

@@ -38,65 +38,35 @@
 		
 	/////////////////
 	// Get the meeting info
-	$infoParams = array(
-		'meetingId' => $row['meeting_id'], 		// REQUIRED - We have to know which meeting.
-		'password' => 'mp',			// REQUIRED - Must match moderator pass for meeting.
 	
-	);
-	$itsAllGood = true;
-	try {$response = $this->bbb->getMeetingInfoWithXmlResponseArray($infoParams);}
-		catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
+		
+	bbb_get_meeting_info($row['meeting_id']);
 	
-		if ($itsAllGood == true) {
-			// If it's all good, then we've interfaced with our BBB php api OK:
-			if ($response == null) {
-				// If we get a null response, then we're not getting any XML back from BBB.
-				echo "Failed to get any response. Maybe we can't contact the BBB server.";
-			}	
-		}	
 	//////////////// end get meeting info
 	
 	
 	////////////////
 	// Get meeting recordings
-	$recordingsParams = array('meetingId' => $row['meeting_id']);			// OPTIONAL - comma separate if multiples
-
-	try {$recording = $this->bbb->getRecordingsWithXmlResponseArray($recordingsParams);}
-		catch (Exception $e) {
-			echo 'Caught exception: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
-
-	if ($itsAllGood == true) {
-		// If it's all good, then we've interfaced with our BBB php api OK:
-		if ($recording == null) {
-			// If we get a null response, then we're not getting any XML back from BBB.
-			echo "Failed to get any response. Maybe we can't contact the BBB server.";
-		}	
-	}	
-
-	if($recording['0']['playbackFormatUrl'] != ''){
-		 $bbb_recordURL = $recording['0']['playbackFormatUrl'] ;
-	}
-
+	$bbb_recordURL = bbb_get_recordings($row['meeting_id']);
+	
 	///////////////////// end get meeting recordings
 		
 	////////////////////
 	// Set the meeting status 
-		if($this->response[$i]['meetingId'] == $row['meeting_id']){
-			if($this->response[$i]['running'] == "true"){
+
+	$response = bbb_is_meeting_running($row['meeting_id']);
+
+			if($response['running'] == "true"){
+
 				$meeting_status = "running";		
 			} else if ($this->response[$i]['running'] == "false"){
+
 				$meeting_status = "ended";
+			}else{
+
+				$meeting_status = "pending";
 			}
-				
-		} else {
-			$meeting_status = "pending";
-			
-		}
+
 	///////////////////// end meeting status
 		?>
 			<tr onkeydown="document.form['n<?php echo $row['news_id']; ?>'].checked = true; rowselect(this);" onmousedown="document.form['n<?php echo $row['message']; ?>'].checked = true; rowselect(this);" id="r_<?php echo $row['message']; ?>">
@@ -117,8 +87,8 @@
 				<?php if($row['status'] == "3") { ?>
 					<td><?php echo _AT('bbb_meeting_ended'); ?></td>
 				<?php } else { ?>
-					<td><?php echo '<a href="mods/bigbluebutton/join_meeting_moderate.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a> or 
-				<?php echo '<a href="mods/bigbluebutton/join_meeting_moderate.php?meetingId='.$row['meeting_id'].SEP.'record=true">'._AT('bbb_record_conference'); ?></a>
+					<td><?php echo '<a href="mods/bigbluebutton/join_meeting_admin.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a> or 
+				<?php echo '<a href="mods/bigbluebutton/join_meeting_admin.php?meetingId='.$row['meeting_id'].SEP.'record=true">'._AT('bbb_record_conference'); ?></a>
 				</td>
 				<?php } ?>
 					

@@ -41,76 +41,28 @@
 	bbb_get_meeting_info($row['meeting_id']);
 	
 	/////////////////
-	/*
-	$infoParams = array(
-		'meetingId' => $_SERVER['HTTP_HOST'].'-'.$row['meeting_id'], 		// REQUIRED - We have to know which meeting.
-		'password' => 'mp',			// REQUIRED - Must match attendee pass for meeting.
-	
-	);
-	//debug($infoParams);
-	$itsAllGood = true;
-	try {$response = $this->bbb->getMeetingInfoWithXmlResponseArray($infoParams);}
-		catch (Exception $e) {
-			echo 'Caught exception -g: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
-	
-		if ($itsAllGood == true) {
-			// If it's all good, then we've interfaced with our BBB php api OK:
-			if ($response == null) {
-				// If we get a null response, then we're not getting any XML back from BBB.
-				echo "Failed to get any response. Maybe we can't contact the BBB server.";
-			}	
-		}	
-		*/
-	//	debug($response);
-	//////////////// end get meeting info
-	
 	
 	////////////////
 	// Get meeting recordings
 	
 	$bbb_recordURL = bbb_get_recordings($row['meeting_id']);
-//global $bbb_recordURL;
-//	debug($bbb_recordURL);
-	////////////////
-/*
-	$recordingsParams = array('meetingId' => $_SERVER['HTTP_HOST'].'-'.$row['meeting_id']);			// OPTIONAL - comma separate if multiples
 
-	try {$recording = $this->bbb->getRecordingsWithXmlResponseArray($recordingsParams);}
-		catch (Exception $e) {
-			echo 'Caught exception -f: ', $e->getMessage(), "\n";
-			$itsAllGood = false;
-		}
-
-	if ($itsAllGood == true) {
-		// If it's all good, then we've interfaced with our BBB php api OK:
-		if ($recording == null) {
-			// If we get a null response, then we're not getting any XML back from BBB.
-			echo "Failed to get any response. Maybe we can't contact the BBB server.";
-		}	
-	}	
-
-	if($recording['0']['playbackFormatUrl'] != ''){
-		 $bbb_recordURL = $recording['0']['playbackFormatUrl'] ;
-	}
-	*/
-//debug($recordingsParams);
-//debug($bbb_recordURL);
 	///////////////////// end get meeting recordings
 		
 	////////////////////
 	// Set the meeting status 
-		if($this->response[$i]['meetingId'] == $_SERVER['HTTP_HOST']."-".$row['meeting_id']){
-			if($this->response[$i]['running'] == "true"){
-				$meeting_status = _AT('bbb_meeting_running');		
+		$response = bbb_is_meeting_running($row['meeting_id']);
+
+			if($response['running'] == "true"){
+
+				$meeting_status = "running";		
 			} else if ($this->response[$i]['running'] == "false"){
-				$meeting_status = _AT('bbb_meeting_over');
+
+				$meeting_status = "ended";
+			}else{
+
+			$meeting_status = "pending";
 			}
-				
-		} else {
-			$meeting_status = _AT('bbb_meeting_pending');
-		}
 	///////////////////// end meeting status
 		?>
 			<tr onkeydown="document.form['n<?php echo $row['news_id']; ?>'].checked = true; rowselect(this);" onmousedown="document.form['n<?php echo $row['message']; ?>'].checked = true; rowselect(this);" id="r_<?php echo $row['message']; ?>">
@@ -159,35 +111,3 @@
 </tbody>
 </table>
 </form>
-
-<?php
-/*
-$itsAllGood = true;
-try {$result = $this->bbb->getMeetingsWithXmlResponseArray();}
-	catch (Exception $e) {
-		echo 'Caught exception -e: ', $e->getMessage(), "\n";
-		$itsAllGood = false;
-	}
-
-if ($itsAllGood == true) {
-	// If it's all good, then we've interfaced with our BBB php api OK:
-	if ($result == null) {
-		// If we get a null response, then we're not getting any XML back from BBB.
-		echo "Failed to get any response. Maybe we can't contact the BBB server.";
-	}	
-	else { 
-	// We got an XML response, so let's see what it says:
-		if ($result['returncode'] == 'SUCCESS') {
-			// Then do stuff ...
-			echo "<p>We got some meeting info from BBB:</p>";
-			// You can parse this array how you like. For now we just do this:
-			debug($result);
-		}
-		else {
-			echo "<p>We didn't get a success response. Instead we got this:</p>";
-			debug($result);
-		}
-	}
-}
-*/
-?>

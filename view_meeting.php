@@ -35,7 +35,7 @@ require_once("bbb_atutor.lib.php");
 
 $meeting_id = intval($_GET['view_meeting']);
 $bbb_recordURL = bbb_get_recordings($meeting_id); 
-debug($bbb_recordURL);
+
 require (AT_INCLUDE_PATH.'header.inc.php'); 
 ?>
 

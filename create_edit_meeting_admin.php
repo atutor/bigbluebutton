@@ -26,7 +26,7 @@ require (AT_INCLUDE_PATH . 'vitals.inc.php');
 //	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
 //	exit;
 //}
-if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON, TRUE)){
+if (admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
 	//alls well
 }else{
 	require (AT_INCLUDE_PATH.'header.inc.php'); 
