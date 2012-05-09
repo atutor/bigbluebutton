@@ -39,7 +39,7 @@ $_admin_privilege  = TRUE; // possible values: FALSE | TRUE
 if (!$msg->containsErrors() && file_exists(dirname(__FILE__) . '/module.sql')) {
 	// deal with the SQL file:
 	require(AT_INCLUDE_PATH . 'classes/sqlutility.class.php');
-	$sqlUtility =& new SqlUtility();
+	$sqlUtility = new SqlUtility();
 
 	/*
 	 * the SQL file could be stored anywhere, and named anything, "module.sql" is simply
