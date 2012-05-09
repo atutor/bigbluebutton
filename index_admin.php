@@ -3,8 +3,6 @@
 /* BigBlueButton module for ATutor                              */
 /* https://github.com/nishant1000/BigBlueButton-module-for-ATutor*/
 /*                                                              */
-/* This module allows to search OpenLearn for educational       */
-/* content.														*/
 /* Author: Nishant Kumar										*/
 /* This program is free software. You can redistribute it and/or*/
 /* modify it under the terms of the GNU General Public License  */
@@ -14,6 +12,7 @@
 define('AT_INCLUDE_PATH', '../../include/');
 require (AT_INCLUDE_PATH.'vitals.inc.php');
 admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON);
+
 
 require_once( "config.php");
 if(CONFIG_SECURITY_SALT ==''){
@@ -29,24 +28,32 @@ require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require_once("bbb_atutor.lib.php");
 
-if(isset($_GET['edit'])){ 
-	if($_GET['aid'] == ''){
+if(isset($_REQUEST['delete'])){
+	if($_REQUEST['meetingId'] == ''){
+		$msg->addError('SELECT_MEETING');
+	} else {
+		$confirm_delete = 'true';
+	}
+}
+
+if(isset($_REQUEST['edit'])){ 
+	if($_REQUEST['aid'] == ''){
 		$msg->addError('SELECT_MEETING');
 	}else{
-		header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/create_edit_meeting_admin.php?meeting_id='.$_GET['aid']);
+		header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/create_edit_meeting_admin.php?meeting_id='.$_REQUEST['aid']);
 		exit;
 	}
 }
 
 
 ////////////////////////
-// Delete BBB meeting after confirming
-if($_GET['delete_meeting'] > "0"){
-	$delete_meeting = intval($_GET['delete_meeting']);
+// Delete BBB meeting recording after confirming
+
+if($_REQUEST['delete_meeting'] > "0"){
+	$delete_meeting = intval($_REQUEST['delete_meeting']);
 	//echo $delete_meeting;
-	require (AT_INCLUDE_PATH.'header.inc.php');
-	if(isset($_GET['delete_meeting'])) {
-		// require (AT_INCLUDE_PATH.'header.inc.php');
+	if(isset($_REQUEST['delete_meeting'])) {
+		 require (AT_INCLUDE_PATH.'header.inc.php');
 	
 		$hidden_vars['delete_id'] = $delete_meeting;
 		$hidden_vars['delete_confirmed'] = "yes";
@@ -76,28 +83,18 @@ if($_POST['delete_confirmed'] == 'yes'){
 
 if (isset($_POST['submit_no'])) {
 	$msg->addFeedback('CANCELLED');
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 	exit;
 } else if (isset($_POST['submit_yes'])) {
 	$meetingId = intval($_POST['meetingId']);
+
+	bbb_delete_meeting($meetingId);
+
 	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
 	$result = mysql_query($sql,$db);
 	
-	// delete any recordings for this meeting
-		$recordingParams = array(
-			'recordId' => $_POST['meetingId']
-		);
-		
-		// Delete the recording
-		$itsAllGood = true;
-		try {$result = $bbb->deleteRecordingsWithXmlResponseArray($recordingParams);}
-				catch (Exception $e) {
-				echo 'Caught exception: ', $e->getMessage(), "\n";
-				$itsAllGood = false;
-			}
-		
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 	exit;
 }
 
@@ -111,8 +108,22 @@ require (AT_INCLUDE_PATH.'header.inc.php');
 global $_base_href;
 
 
+if(isset($_REQUEST['delete']) && isset($confirm_delete)){
+
+	if($_REQUEST['meetingId'] == ''){
+		$msg->addError('SELECT_MEETING');
+	}else {
+		$hidden_vars['meetingId'] = $_REQUEST['meetingId'];
+		$msg->addConfirm("BBB_DELETE_CONFIRM", $hidden_vars); 
+		$msg->printConfirm();
+				 
+		 require (AT_INCLUDE_PATH.'footer.inc.php');
+		 exit;
+	}
+}
+
 ?>
-<h3><?php echo _AT('bbb_admin_setup');  ?> </h3><br />
+
 
 <div class="input-form" style="padding:.5em;">
 <p><?php echo _AT('bbb_config_text'); ?></p>
@@ -120,8 +131,10 @@ global $_base_href;
 <form name="form" action="<?php echo $_base_href; ?>mods/bigbluebutton/change_admin.php" method="post">
 <label for="url"><?php echo _AT('bbb_url'); ?></label><br />
 <input type="text" name="bbb_url" id="url" class="input" maxlength="60" size="40" value="<?php echo $_config['bbb_url']  ?>" /><br />
-<label for="url"><?php echo _AT('bbb_salt'); ?></label><br />
+<label for="salt"><?php echo _AT('bbb_salt'); ?></label><br />
 <input type="text" name="bbb_salt" id="salt" maxlength="60" size="40"  value="<?php echo $_config['bbb_salt'];  ?>" /><br />
+<label for="bbb_max_recordings"><?php echo _AT('bbb_max_recording'); ?></label><br />
+<input type="text" name="bbb_max_recordings" id="bbb_max_recordings"  size="3"  value="<?php echo $_config['bbb_max_recordings'];  ?>" /><br />
 <input type="submit" name="submit" value="<?php echo _AT('save'); ?>">
 </form>
 
@@ -155,9 +168,5 @@ function get_course_title($course_id){
 }
 
 ?>
-<!--
-<a href="<?php echo $_config['bbb_url']; ?>" target="bbb">(<?php echo _AT('bbb_open_new_win');  ?>)</a><br />               
-<iframe src="<?php echo $_config['bbb_url']; ?>" width="100%" height="600">
-  <p>Your browser does not support iframes.</p>
-</iframe> -->
+
 <?php require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

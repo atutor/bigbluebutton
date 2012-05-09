@@ -18,16 +18,7 @@ define('AT_INCLUDE_PATH', '../../include/');
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 
-// A hack to redirect student to the index.php file in the module
-// Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
-// Test again when bbb0.8 comes out.
-/*
-if(!$_SESSION['is_admin']){
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
-	exit;
-}
-*/
-//authenticate(AT_PRIV_BIGBLUEBUTTON);
+
 require_once("config.php");
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();

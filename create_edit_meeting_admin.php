@@ -18,14 +18,7 @@ define('AT_INCLUDE_PATH', '../../include/');
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 
-// A hack to redirect student to the index.php file in the module
-// Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
-// Test again when bbb0.8 comes out.
 
-//if(!$_SESSION['is_admin']){
-//	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
-//	exit;
-//}
 if (admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
 	//alls well
 }else{
@@ -38,48 +31,47 @@ if (admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
 // Create BBB Meeting
 
 
-if($_GET['create']){
-//debug($_GET);
-	if($_GET['course_time'] !='' && $_GET['course_message'] !=''){
-		$bbb_meeting_name = $addslashes($_GET['course_name']);
-		$bbb_message = $addslashes($_GET['course_message']);
-		$bbb_meeting_time = $addslashes($_GET['course_time']);
+if($_REQUEST['create']){
+//debug($_REQUEST);
+	if($_REQUEST['course_time'] !='' && $_REQUEST['course_message'] !=''){
+		$bbb_meeting_name = $addslashes($_REQUEST['course_name']);
+		$bbb_message = $addslashes($_REQUEST['course_message']);
+		$bbb_meeting_time = $addslashes($_REQUEST['course_time']);
+		$bbb_course_id = intval($_REQUEST['course_id']);
 		
-		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('','$_SESSION[course_id]','$bbb_meeting_name', '$bbb_meeting_time','$bbb_message ','1')";
-		
+		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('',  '$bbb_course_id','$bbb_meeting_name', '$bbb_meeting_time','$bbb_message ','1')";
+		debug($sql);
 		if($result = mysql_query($sql,$db)){
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-			if($_SESSION['is_admin']){
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
-			exit;
-			}else{
+
 			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 			exit;
-			
-			}
+
 		}else{
 			$msg->addError('ACTION_FAILED');
 		}
 	}else{
 	
 			$msg->addError('TIME_REQUIRED_BBB');
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php?course_timing='.urlencode($stripslashes($_GET['course_timing'])).SEP.'course_message='.urlencode($stripslashes($_GET['course_message'])));
+			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php?course_timing='.urlencode($stripslashes($_REQUEST['course_timing'])).SEP.'course_message='.urlencode($stripslashes($_REQUEST['course_message'])));
 			exit;
 	}
 // Update an existing BBB meeting
 
-} else if ($_GET['editthis']){
-	if($_GET['course_time'] !='' && $_GET['course_message'] !=''){
-		$bbb_meeting_name = $addslashes($_GET['course_name']);
-		$bbb_message = $addslashes($_GET['course_message']);
-		$bbb_meeting_time = $addslashes($_GET['course_time']);
-		$bbb_meeting_status = intval($_GET['meeting_status']);
+} else if ($_REQUEST['editthis']){
+	if($_REQUEST['course_time'] !='' && $_REQUEST['course_message'] !=''){
+		$bbb_meeting_id = intval($_REQUEST[meeting_id]);
+		$bbb_meeting_name = $addslashes($_REQUEST['course_name']);
+		$bbb_message = $addslashes($_REQUEST['course_message']);
+		$bbb_meeting_time = $addslashes($_REQUEST['course_time']);
+		$bbb_meeting_status = intval($_REQUEST['meeting_status']);
+		$bbb_course_id =  intval($_REQUEST['course_id']);
 		
-		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET course_name = '$bbb_meeting_name', message = '$bbb_message', course_timing = '$bbb_meeting_time', status = '$bbb_meeting_status' WHERE meeting_id = '$_GET[meeting_id]'";
+		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET course_id =  '$bbb_course_id', course_name = '$bbb_meeting_name', message = '$bbb_message', course_timing = '$bbb_meeting_time', status = '$bbb_meeting_status' WHERE meeting_id = '$bbb_meeting_id'";
 	
 		if($result = mysql_query($sql, $db)){
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
+			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 			exit;
 			
 		}else{
@@ -97,13 +89,14 @@ if($_GET['create']){
 <?php  require (AT_INCLUDE_PATH.'header.inc.php'); ?>
 <?php
 
-if(isset($_GET['meeting_id'])){ 
-	$meeting_id = intval($_GET['meeting_id']);
+if(isset($_REQUEST['meeting_id'])){ 
+	$meeting_id = intval($_REQUEST['meeting_id']);
 	$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meeting_id'";
 	$result = mysql_query($sql, $db);
 
 	while($row = mysql_fetch_assoc($result)){
 		$meeting_id  = $row['meeting_id'];
+		$bbb_course_id  = $row['course_id'];
 		$meeting_name = $row['course_name'];
 		$meeting_time = $row['course_timing'];
 		$meeting_status = $row['status'];
@@ -118,6 +111,24 @@ if(isset($_GET['meeting_id'])){
 
 		<input type='hidden' name='meeting_id' value="<?php echo $meeting_id; ?>">
 		<dl>
+			<dt><label for="course_title"><?php echo _AT('bbb_course_title'); ?></label></dt>
+			<dd>
+			<?php
+				$sql = "SELECT title, course_id from ".TABLE_PREFIX."courses";
+				$result = mysql_query($sql, $db);
+			?>
+			<select name="course_id">
+			<?php
+				while($row = mysql_fetch_assoc($result)){
+					if($bbb_course_id == $row['course_id']){
+					 $selected = ' selected="selected"';
+					}
+					echo '<option value="'.$row['course_id'].'"  '.$selected.'>'.$row['title'].'</option>';
+				}
+			
+			?>
+			
+			</select></dd>
 		<dt><label for="meeting_name"><?php echo _AT('bbb_meeting_name'); ?></label></dt>
 			<dd><input type="text" name="course_name" id="meeting_name" value="<?php echo $meeting_name; ?>"/></dd>
 		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
@@ -144,13 +155,31 @@ if(isset($_GET['meeting_id'])){
 	<input type='hidden' name='create_meeting' value="checked">
 	<input type='hidden' name='meeting_status' value="1">
 		<dl>
+			<dt><label for="course_title"><?php echo _AT('bbb_course_title'); ?></label></dt>
+			<dd>
+			<?php
+				$sql = 'SELECT title, course_id from '.TABLE_PREFIX.'courses';
+				$result = mysql_query($sql, $db);
+			?>
+			<select name="course_id">
+			<?php
+				while($row = mysql_fetch_assoc($result)){
+					if($course_id == $row['course_id']){
+					 $selected = 'selected="selected"';
+					}
+					echo '<option value="'.$row['course_id'].'" '.$selected.'>'.$row['title'].'</option>';
+				}
+			
+			?>
+			
+			</select></dd>
 		<dt><label for="meeting_name"><?php echo _AT('bbb_meeting_name'); ?></label></dt>
-			<dd><input type="text" name="course_name" id="meeting_name" value="<?php echo urldecode($stripslashes($_GET['course_name'])); ?>"/></dd>
+			<dd><input type="text" name="course_name" id="meeting_name" value="<?php echo urldecode($stripslashes($_REQUEST['course_name'])); ?>"/></dd>
 
 		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
-			<dd><input type="text" name="course_time" id="time" value="<?php echo urldecode($stripslashes($_GET['course_time'])); ?>"/></dd>
+			<dd><input type="text" name="course_time" id="time" value="<?php echo urldecode($stripslashes($_REQUEST['course_time'])); ?>"/></dd>
 			<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
-			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo urldecode($stripslashes($_GET['course_message'])); ?></textarea></dd>
+			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo urldecode($stripslashes($_REQUEST['course_message'])); ?></textarea></dd>
 		</dl>
 
     <input type="submit" value="<?php echo _AT('bbb_create_meeting'); ?>" name='create' class="button"/>

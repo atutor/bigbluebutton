@@ -1,4 +1,13 @@
 <?php
+/****************************************************************/
+/* BigBlueButton module for ATutor                              */
+/*                                                              */
+/*                                                              */
+/* Author: Greg Gay										        */
+/* This program is free software. You can redistribute it and/or*/
+/* modify it under the terms of the GNU General Public License  */
+/* as published by the Free Software Foundation.				*/
+/****************************************************************/
 
 function bbb_end_meeting($meeting_id, $modpwd){
 	global $bbb;

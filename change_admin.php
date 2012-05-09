@@ -20,9 +20,10 @@
 	require_once(AT_INCLUDE_PATH . '/classes/Message/Message.class.php');
 	global $savant;
 	$msg = new Message($savant);
-	
+
 	$bbb_url= $addslashes($_POST['bbb_url']);
 	$bbb_salt= $addslashes($_POST['bbb_salt']);
+	$bbb_max_recordings = intval($_POST['bbb_max_recordings']);
 
 if(isset($_POST['submit'])) {
 		global $db;
@@ -47,6 +48,16 @@ if(isset($_POST['submit'])) {
 			$msg->addError('BBB_SETTINGS_FAILED');
 		}
 		
+		$sql3 = "REPLACE INTO " . TABLE_PREFIX . "config  (name, value) VALUES ('bbb_max_recordings', '$bbb_max_recordings') ";
+	
+		if(mysql_query($sql3, $db)){	
+			$msg->addFeedback('SETTINGS_CHANGED');
+			//Redirect back to the form
+
+		} else{
+		
+			$msg->addError('BBB_SETTINGS_FAILED');
+		}
 	header('Location: index_admin.php');
 }
 

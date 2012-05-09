@@ -35,10 +35,10 @@ require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require("bbb_atutor.lib.php");
 
-$_attendeePassword="ap";   
+$_attendeePassword = "ap";   
 $_logoutUrl = $_base_href.'mods/bigbluebutton/index.php';
 $username = get_login(intval($_SESSION['member_id']));
-$meetingID=intval($_GET['meetingId']);
+$meetingID = intval($_GET['meetingId']);
 $response = bbb_get_meeting_info($meetingID);
 $bbb_joinURL = bbb_join_meeting($meetingID, $username, $_attendeePassword);
 
@@ -52,7 +52,6 @@ if($response['returncode'] == "SUCCESS"){
 <?php
 } else{
 	echo '<p style="border:1px solid #cccccc; padding:1em;border-radius:.3em;background-color:#eeeeee;">'._AT('bbb_no_meeting').'</p>';
-
 }
 
 ?>

@@ -12,7 +12,7 @@ CREATE TABLE `bigbluebutton` (
 
 INSERT INTO `language_text` VALUES ('en', '_module','bigbluebutton','BigBlueButton',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bigbluebutton_text','A sample BBB text for detailed homepage.',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_module','bbb_config_text','Enter the URL to the BigBlueButton Welcome screen, and the SALT security token. The SALT token is a 32 character string found in the bigbluebutton.properties file of your BBB installation.  ',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_config_text','Enter the URL to the BigBlueButton base location, and the SALT security token. The SALT token is a 32 character string found in the bigbluebutton.properties file of your BBB installation. Enter the maximum number of recordings allowed per course to limit the amount of space occupied by BBB meeting recordings. Set maximum recordings to 0 to disable recordings. ',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_config','BigBlueButton Configuration',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_url','BigBlueButton URL',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_salt ','BigBlueButton SALT Security Token',NOW(),'');
@@ -54,13 +54,18 @@ INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_pending','Pendi
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_running','Running',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_over','Ended',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_continue_yes','Do you wish to continue:',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_module','bbb_continue_text','You are about to leave ATutor and access the BigBlueButton video conferencing system, a Flash-based application. If you find you are unable to access the video conferencing system with your assistive technology, use your browser back button, to back out of the system. Contact your instructor for details on how to access recordings of video conference meeting.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_continue_text','You are about to leave ATutor and access the BigBlueButton video conferencing system, a Flash-based application. If you find you are unable to access the video conferencing system with your assistive technology, use your browser back button, to back out of the system. Contact your instructor for details on how to access recordings of video conference meetings.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_course_title','Course Title',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_current_meetings','Manage BigBlueButton Meetings',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_no_meeting','This meeting has not started yet. It will become available when the moderator logs in. Check back here at the scheduled meeting time.',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_MEETING_ENDED','Meeting has been ended. To re-enable choose the radio button for the meeting and press edit, then in the Status menu choose Pending. Recordings may take a while to process before becoming available, if enabled for this meeting.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_max_recording','Maximum Recordings per Course',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_MEETING_ENDED','Meeting has been ended. To re-enable choose the radio button for the meeting and press edit, then in the Status menu choose Pending. ',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_MEETING_ENDED_OTHER','You have successfully exited the meeting, though it continues to run. The meeting will be ended when the moderator logs out.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_RECORDING_IN_PROGRESS', 'Recordings may take a while to process before becoming available, if enabled for this meeting.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_NO_MEETINGS','No meetings are yet available.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_CONFIRM_DELETE_RECORDING','Are you sure you want to delete this recording?',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_SELECT_MEETING','Now meeting was selected.',NOW(),'');
-
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_SELECT_MEETING','No meeting was selected.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_INFOS_MAX_REACHED','This meeting will not be recorded because the maximum number of recordings has been reached for this course. To record this meeting, delete an existing recording, and start again.',NOW(),'');
 
 
 

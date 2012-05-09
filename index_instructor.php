@@ -16,13 +16,33 @@ define('AT_INCLUDE_PATH', '../../include/');
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 
+
+////////////////////////
+// Initialize BigBlueButton
+require_once("config.php");
+require_once("bbb-api.php");
+$bbb = new BigBlueButton();
+require("bbb_atutor.lib.php");
+
+////////
 // A hack to redirect student to the index.php file in the module
 // Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
 // Test again when bbb0.8 comes out.
-//debug($_SESSION);
-//exit;
-if($_SESSION['course_id'] == -1){
 
+if($_SESSION['course_id'] == -1){
+	// if the admin started the meeting, admin ends it
+	if($_GET['mod'] = $_SESSION['login']){
+		$meeting_id = $_GET['meeting_id'];
+		$modpwd = "mp";
+		bbb_end_meeting($meeting_id,$modpwd);
+		global $response;
+		// Update the db to set the meeting to ended	
+		$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
+		$result = mysql_query($sql, $db);
+		$msg->addFeedback('MEETING_ENDED');
+	}else {
+		$msg->addFeedback('MEETING_ENDED_OTHER');
+	}
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 	exit;
 }else if(!$_SESSION['is_admin']){
@@ -41,14 +61,7 @@ if(isset($_GET['delete'])){
 		$confirm_delete = 'true';
 	}
 }
-////////////////////////
-// Initialize BigBlueButton
-require_once("config.php");
-require_once("bbb-api.php");
-$bbb = new BigBlueButton();
-require("bbb_atutor.lib.php");
 
-////////
 
 if(isset($_GET['edit'])){ 
 	if($_GET['aid'] == ''){
@@ -63,19 +76,25 @@ if(isset($_GET['edit'])){
 // End and existing meeting when the instructor logs out
 
 if($_SERVER['HTTP_REFERER'] == $_config['bbb_url']."/client/BigBlueButton.html"){
+	if($_GET['mod'] = $_SESSION['login']){
 
-	$meeting_id = $_GET['meeting_id'];
-	$modpwd = "mp";
-	//$shortMeetingIdArray = preg_split('/-/', $meeting_id);
-	//$shortMeetingId = $shortMeetingIdArray['1'];
-	
-	bbb_end_meeting($meeting_id,$modpwd);
-	
-	global $response;
-	// Update the db to set the meeting to ended	
-	$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
-	$result = mysql_query($sql, $db);
-	$msg->addFeedback('MEETING_ENDED');
+		$meeting_id = $_GET['meeting_id'];
+		$modpwd = "mp";
+		bbb_end_meeting($meeting_id,$modpwd);
+		
+		global $response;
+		// Update the db to set the meeting to ended	
+		$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
+		$result = mysql_query($sql, $db);
+		if(BBB_MAX_RECORDINGS > 0){
+			$msg->addFeedback('MEETING_ENDED');
+			$msg->addFeedback('RECORDING_IN_PROGRESS');
+		}else {
+			$msg->addFeedback('MEETING_ENDED');
+		}
+	} else {
+		$msg->addFeedback('MEETING_ENDED_OTHER');
+	}
 }
 /////////////////////// end end meeting on logout
 

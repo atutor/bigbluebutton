@@ -21,16 +21,8 @@ require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require("bbb_atutor.lib.php");
 
-//$bbb_joinURL;
+
 $_courseId = $_SESSION['course_id'];
-//$_moderatorPassword="mp";
-//$_attendeePassword="ap";   
-//$_logoutUrl= $_base_href.'mods/bigbluebutton/index.php';
-//$username=get_login(intval($_SESSION["member_id"]));
-
-//$meeting_id = intval($_GET['meeting_id']);
-//$bbb_recordURL = $result['0']['playbackFormatUrl'];
-
 $sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_courseId'";
 $result = mysql_query($sql, $db);
 
@@ -41,11 +33,7 @@ if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
 	$savant->assign('bbb_joinURL', $bbb_joinURL);
 	$savant->assign('bbb_recordURL', $bbb_recordURL);
 	$savant->display('templates/index.tmpl.php');
-/*
-	$savant->assign('result', $result);
-	$savant->assign('bbb_joinURL', $bbb_joinURL);
-	$savant->display('templates/index.tmpl.php');
-*/
+
 }
 
  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

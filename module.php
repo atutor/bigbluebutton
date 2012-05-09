@@ -47,6 +47,7 @@ if (admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON, TRUE) || admin_authenticate(
 	$this->_pages['mods/bigbluebutton/join_meeting_admin.php']['parent'] = 'mods/bigbluebutton/index_admin.php';
 	$this->_pages['mods/bigbluebutton/create_edit_meeting_admin.php']['title_var'] = 'bbb_create_edit_meeting';
 	$this->_pages['mods/bigbluebutton/create_edit_meeting_admin.php']['parent']   = 'mods/bigbluebutton/index_admin.php';
+	$this->_pages['mods/bigbluebutton/index_admin.php']['children']   = array('mods/bigbluebutton/create_edit_meeting_admin.php');
 
 }
 
@@ -73,13 +74,8 @@ $this->_pages['mods/bigbluebutton/join_meeting.php']['title_var'] = 'bbb_join_me
 $this->_pages['mods/bigbluebutton/join_meeting.php']['parent'] = 'mods/bigbluebutton/index.php';
 $this->_pages['mods/bigbluebutton/index.php']['title_var'] = 'bigbluebutton';
 $this->_pages['mods/bigbluebutton/index.php']['img']       = 'mods/bigbluebutton/bigbluebutton.png';
-//$this->_pages['mods/bigbluebutton/index.php']['children']   = array('mods/bigbluebutton/view_meeting.php');
 $this->_pages['mods/bigbluebutton/view_meeting.php']['title_var'] = 'bbb_view_meeting';
 
-//$this->_pages['mods/bigbluebutton/view_meeting.php']['parent'] = 'mods/bigbluebutton/index.php';
 
-//function bigbluebutton_get_group_url($group_id) {
-//	return 'mods/bigbluebutton/index_group.php';
-//}
 
 ?>

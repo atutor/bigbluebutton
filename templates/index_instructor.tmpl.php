@@ -19,7 +19,9 @@
 	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=course_timing"><?php echo _AT('bbb_meeting_time'); ?></a></th>
 	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=status"><?php echo _AT('bbb_meeting_status'); ?></a></th>
 	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=join"><?php echo _AT('bbb_join'); ?></a></th>
+	<?php if(BBB_MAX_RECORDINGS > 0){ ?>
 	<th scope="col"><a href="mods/bigbluebutton/index.php?<?php echo $this->orders[$this->order]; ?>=recording"><?php echo _AT('bbb_recordings'); ?></a></th>
+	<?php } ?>
 </tr>
 </thead>
 <tfoot>
@@ -81,18 +83,25 @@
 					
 				<?php if($row['status'] == "3") { ?>
 					<td><?php echo _AT('bbb_meeting_ended'); ?></td>
-				<?php } else { ?>
-					<td><?php echo '<a href="mods/bigbluebutton/join_meeting_moderate.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a> or 
+				<?php } else if($meeting_status == "running"){ ?>
+					<td><?php echo '<a href="mods/bigbluebutton/join_meeting.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a>
+					<?php	}else { ?>
+					<td><?php echo '<a href="mods/bigbluebutton/join_meeting_moderate.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a> 
+					
+				<?php if(BBB_MAX_RECORDINGS > 0){  ?>	
+					or 
 				<?php echo '<a href="mods/bigbluebutton/join_meeting_moderate.php?meetingId='.$row['meeting_id'].SEP.'record=true">'._AT('bbb_record_conference'); ?></a>
+				<?php } ?>
 				</td>
 				<?php } ?>
-					
-				<?php if($bbb_recordURL != ''){ ?>
-				<td><?php echo '<a href="mods/bigbluebutton/view_meeting.php?view_meeting='.$row['meeting_id'].'" target="_top">'._AT('bbb_view_recording'); ?></a><!-- <a href="mods/bigbluebutton/pub_meeting.php?pub_meeting=<?php echo $row['meeting_id'];?>" target="_top"><?php echo _AT('bbb_publish_recording'); ?></a> -->
-				<a href="<?php echo $_SERVER['PHP_SELF']; ?>?delete_meeting=<?php echo $row['meeting_id']; ?>" >
-				<img src="<?php echo $this->base_href; ?>/images/x.gif" alt="<?php echo _AT('bbb_delete_recording'); ?>" title="<?php echo _AT('bbb_delete_recording'); ?>" style="float:right;"/></a></td>
-				<?php }else{ ?>
-				<td><?php echo _AT('bbb_no_recording'); ?></td>
+				<?php if(BBB_MAX_RECORDINGS > 0){ ?>
+					<?php if($bbb_recordURL != ''){ ?>
+						<td><?php echo '<a href="mods/bigbluebutton/view_meeting.php?view_meeting='.$row['meeting_id'].'" target="_top">'._AT('bbb_view_recording'); ?></a><!-- <a href="mods/bigbluebutton/pub_meeting.php?pub_meeting=<?php echo $row['meeting_id'];?>" target="_top"><?php echo _AT('bbb_publish_recording'); ?></a> -->
+						<a href="<?php echo $_SERVER['PHP_SELF']; ?>?delete_meeting=<?php echo $row['meeting_id']; ?>" >
+						<img src="<?php echo $this->base_href; ?>/images/x.gif" alt="<?php echo _AT('bbb_delete_recording'); ?>" title="<?php echo _AT('bbb_delete_recording'); ?>" style="float:right;"/></a></td>
+						<?php }else{ ?>
+						<td><?php echo _AT('bbb_no_recording'); ?></td>
+					<?php } ?>
 				<?php } ?>
 			</tr>
 		<?php 
