@@ -44,7 +44,25 @@ if(isset($_REQUEST['edit'])){
 		exit;
 	}
 }
+//////////////////////////
+// Delete meeting and any recordings associated with it
 
+if (isset($_POST['submit_no'])) {
+	$msg->addFeedback('CANCELLED');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
+	exit;
+} else if (isset($_POST['submit_yes']) && isset($_POST['meetingId'])) {
+	$meetingId = intval($_POST['meetingId']);
+
+	bbb_delete_meeting($meetingId);
+
+	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
+	$result = mysql_query($sql,$db);
+	
+	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
+	exit;
+}
 
 ////////////////////////
 // Delete BBB meeting recording after confirming
@@ -68,35 +86,18 @@ if($_REQUEST['delete_meeting'] > "0"){
 
 if($_POST['delete_confirmed'] == 'yes'){
 	$delete_id = $_POST['delete_id'];
-	
+
 	bbb_delete_meeting($delete_id);
 	
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 	exit;
 }	
 
 /////////////////////// End delete recording
 
-//////////////////////////
-// Delete meeting and any recordings associated with it
 
-if (isset($_POST['submit_no'])) {
-	$msg->addFeedback('CANCELLED');
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
-	exit;
-} else if (isset($_POST['submit_yes'])) {
-	$meetingId = intval($_POST['meetingId']);
-
-	bbb_delete_meeting($meetingId);
-
-	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
-	$result = mysql_query($sql,$db);
-	
-	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
-	exit;
-}
 
 ///////////// END DELETE MEETING
 
@@ -105,6 +106,7 @@ $bbb_deleteURL = $result['0']['recordId'];
 
 
 require (AT_INCLUDE_PATH.'header.inc.php');
+
 global $_base_href;
 
 
