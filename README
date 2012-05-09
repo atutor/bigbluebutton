@@ -1,5 +1,8 @@
-# Readme for the ATutor BigBlueButton module v.07 #
-# create with BBB 0.71 #
+# Readme for the ATutor BigBlueButton module v.08 #
+# create with BBB 0.8beta-4 #
+
+For BigBlueButton specific documentation see:
+http://www.bigbluebutton.org/overview/
 
 Prerequisite:
 A functioning BigBlueButton server
@@ -9,11 +12,13 @@ Installation:
 2) Login to ATutor as the administrator
 3) Click Modules tab, then Install Module. The module you just unzipped should appear near the top of the screen.
 4) Click Install Module and follow the instructions to install. 
-5) Once Installed it will be listed with the other module, though Disabled. Select the module and click the Enable button below.
+5) Once Installed it will be listed with the other modules, though Disabled. Select the module and click the Enable button below.
 5) Open the BigBlueButton tab above that was added when the module was enabled
 6) Enter the URL to the BigBlueButton installation
 7) Enter the SALT security hash found in the BigBlueButton's bigbluebutton.properties file of your BigBlueButton installation. Look for the value of "beans.dynamicConferencceService.securitySalt". 
-8) BigBlueButton is successfully installed when it appears below the BigBlueButton Configuration area.
+8) Save those values to finish the installation
+9) Optionally set the maximum number of recording per course, or leave as "0" to disable recordings.
+
 
 
 How to use:-
@@ -21,29 +26,44 @@ How to use:-
 For Instructors
 ----------------
 
-1) Login a an ATutor instructor
-2) Under the Manage tab when in a course, click on the BigBlueButton link.
-3) If a BigBlueButton meeting does not yet exist, the Create Meeting form will appear. Enter a meeting time and a meeting description and press the Create Meeting button.
-4) The Create Meeting will be replaces with a table listing the meeting, with a link to join the meeting (only one meeting per course in this version of the module)
-5) Click the Edit button to change meeting details, or click Delete to remove the meeting. 
-6) Click on Join Meeting through the Manage BigBlueButton screen to have moderator privileges granted (login through the Student screen provides attendee privileges only)
-7) Enter the course and then click on Bigbluebutton tab and inside it you will find the information about the virtual classroom and a link to the classroom.
-8) Return to the Manage screen and click on Course Tools. Check one of the checkboxes next to the module to add it as a course tool and make it available to students.
+1) Login as an ATutor instructor
+2) Under the Manage tab when in a course, click on Course Tools then choose a location for BigBlueButton either as a navigation tab, or home page icon or box. This will make BigBlueButton available to students.
+3) Under the Manage tab when in a course, click on the BigBlueButton link.
+4) Click Create Meeting to have the create form appear. Enter a meeting title, time and a meeting description and press the Create Meeting button.
+5) The created meeting will be listed in the table below, with a link to join the meeting, or to record the meeting, if recording has been enabled by the administrator.
+6) Click the Edit button to change meeting details, or click Delete to remove the meeting and any recordings.
+7) Click the X icon beside a recording to delete just the recording for a meeting (if enable and a recording exists), but to keep the meeting details.
+8) Click on Join Conference through the Manage BigBlueButton screen to have moderator privileges granted (login through the Student screen provides attendee privileges only)
+9) Click of Record Conference to join a meeting as a moderator, and start recording. The number of recordings may be limited by the administrator. Delete older recordings before creating new ones if you receive a message that the maximum number of recordings has been reached.
+10) If you are the person who started a meeting, the meeting will end when you logout of the meeting, and will cease to be available to others. A meeting can be reenabled and started again later by choosing the associated radio button, then pressing Edit and resetting the status to Pending. (admins and instructors can start meetings).
+
 
 For Students
 ------------
 1) Click on the BigBlueButton tab at the top of the screen, or the BigBlueButton module link on the coure homepage, whichever is enabled for the course.
-2) On the screen that opens. click on the Join Conference link next to the meeting listed 
-3) A student can enter the meeting room at any point of the day even if no class is going on at that time.
+2) On the screen that opens, click on the Join Conference link next to the meeting listed 
+3) If a meeting has Ended, it will not be available to access. 
+4) If a meeting is Pending, a student must wait for a moderator to start the meeting.
+5) If recordings are available, click on the View Recording link next to a meeting listing to view them.
+
+For Administrators
+------------------
+1) Under the BigBlueBotton tab created in the Administration area of ATutor after the module is installed and enabled, enter the URL to the BBB installation and the security SALT.
+2) Set the Maximum number of recordings per course to control space used by each course. Set to 0 to disable recordings.
+3) Admin's can create and start meetings like instructors can, described above.
+4) Admin's can delete recordings and meetings like instructors can.
+5) If an admin starts a meeting by clicking on Join Conference or Record Conference for a meeting that is listed as Pending, the meeting will end when the admin logs out of the conference.
+ 
+
 
 Todo
 ----
-1. Extend module for multiple meetings per course (add a meeting_id field to the db)
+1. Extend module for multiple meetings per course (add a meeting_id field to the db) DONE 
 2. Add group BBB meetings
-3. Add record/playback meeting feature (available in BBB .8)
+3. Add record/playback meeting feature (available in BBB .8) DONE
 4. Update time with select menus for choosing formated date/time
-5. Add a title field to the db for short description. Message can be used for a longer description
-6. Setup recordings
+5. Add a title field to the db for short description. Message can be used for a longer description DONE
+6. Setup recordings DONE
 
 Also see BBB-API-buddy
 https://github.com/omarshammas/bigbluebutton-API-Buddy
