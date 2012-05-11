@@ -37,7 +37,8 @@ require("bbb_atutor.lib.php");
 
 $_attendeePassword = "ap";   
 $_logoutUrl = $_base_href.'mods/bigbluebutton/index.php';
-$username = get_login(intval($_SESSION['member_id']));
+$username = $_SESSION['login'];
+//$username = get_login(intval($_SESSION['member_id']));
 $meetingID = intval($_GET['meetingId']);
 $response = bbb_get_meeting_info($meetingID);
 $bbb_joinURL = bbb_join_meeting($meetingID, $username, $_attendeePassword);

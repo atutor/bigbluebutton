@@ -27,9 +27,11 @@ if(CONFIG_SECURITY_SALT ==''){
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require_once("bbb_atutor.lib.php");
-
+//debug($_REQUEST);
 if(isset($_REQUEST['delete'])){
-	if($_REQUEST['meetingId'] == ''){
+//debug($_REQUEST['aid']);
+	if($_REQUEST['aid'] == ''){
+	//echo "in here";
 		$msg->addError('SELECT_MEETING');
 	} else {
 		$confirm_delete = 'true';
@@ -57,6 +59,8 @@ if (isset($_POST['submit_no'])) {
 	bbb_delete_meeting($meetingId);
 
 	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
+	
+	debug($sql);
 	$result = mysql_query($sql,$db);
 	
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
@@ -69,7 +73,7 @@ if (isset($_POST['submit_no'])) {
 
 if($_REQUEST['delete_meeting'] > "0"){
 	$delete_meeting = intval($_REQUEST['delete_meeting']);
-	//echo $delete_meeting;
+	echo $delete_meeting."test";
 	if(isset($_REQUEST['delete_meeting'])) {
 		 require (AT_INCLUDE_PATH.'header.inc.php');
 	
@@ -112,10 +116,10 @@ global $_base_href;
 
 if(isset($_REQUEST['delete']) && isset($confirm_delete)){
 
-	if($_REQUEST['meetingId'] == ''){
+	if($_REQUEST['aid'] == ''){
 		$msg->addError('SELECT_MEETING');
 	}else {
-		$hidden_vars['meetingId'] = $_REQUEST['meetingId'];
+		$hidden_vars['meetingId'] = $_REQUEST['aid'];
 		$msg->addConfirm("BBB_DELETE_CONFIRM", $hidden_vars); 
 		$msg->printConfirm();
 				 
@@ -127,20 +131,6 @@ if(isset($_REQUEST['delete']) && isset($confirm_delete)){
 ?>
 
 
-<div class="input-form" style="padding:.5em;">
-<p><?php echo _AT('bbb_config_text'); ?></p>
-
-<form name="form" action="<?php echo $_base_href; ?>mods/bigbluebutton/change_admin.php" method="post">
-<label for="url"><?php echo _AT('bbb_url'); ?></label><br />
-<input type="text" name="bbb_url" id="url" class="input" maxlength="60" size="40" value="<?php echo $_config['bbb_url']  ?>" /><br />
-<label for="salt"><?php echo _AT('bbb_salt'); ?></label><br />
-<input type="text" name="bbb_salt" id="salt" maxlength="60" size="40"  value="<?php echo $_config['bbb_salt'];  ?>" /><br />
-<label for="bbb_max_recordings"><?php echo _AT('bbb_max_recording'); ?></label><br />
-<input type="text" name="bbb_max_recordings" id="bbb_max_recordings"  size="3"  value="<?php echo $_config['bbb_max_recordings'];  ?>" /><br />
-<input type="submit" name="submit" value="<?php echo _AT('save'); ?>">
-</form>
-
-</div>
 
 <?php
 $sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton";

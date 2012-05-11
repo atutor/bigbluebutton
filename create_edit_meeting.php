@@ -71,7 +71,7 @@ if($_GET['create']){
 } else if ($_GET['editthis']){
 	if($_GET['course_time'] !='' && $_GET['course_message'] !=''){
 		$bbb_meeting_name = $addslashes($_GET['course_name']);
-		$bbb_message = $addslashes($_GET['course_message']);
+		$bbb_message = htmlentities_utf8($addslashes($_GET['course_message']));
 		$bbb_meeting_time = $addslashes($_GET['course_time']);
 		$bbb_meeting_status = intval($_GET['meeting_status']);
 		
@@ -107,12 +107,12 @@ if(isset($_GET['meeting_id'])){
 		$meeting_name = $row['course_name'];
 		$meeting_time = $row['course_timing'];
 		$meeting_status = $row['status'];
-		$course_message = htmlentities_utf8($row['message']);
+		$course_message = html_entity_decode($row['message']);
 		//debug($meeting_status);
 	}
 	?>
 
-	<div class="input-form">
+	<div class="input-form" style="padding:1em;">
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 	<input type='hidden' name='create_classroom' value="checked">
 
@@ -123,7 +123,7 @@ if(isset($_GET['meeting_id'])){
 		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
 			<dd><input type="text" name="course_time" id="time" value="<?php echo $meeting_time; ?>"/></dd>
 		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
-			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo htmlentities_utf8($course_message); ?></textarea></dd>
+			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo $course_message; ?></textarea></dd>
 			
 		<dt><label for="time"><?php echo _AT('bbb_meeting_status'); ?></label></dt>
 			<dd><select name="meeting_status">
@@ -139,7 +139,7 @@ if(isset($_GET['meeting_id'])){
     </div>
 <?php }else{ ?>
 
-	<div class="input-form">
+	<div class="input-form" style="padding:1em;">
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 	<input type='hidden' name='create_meeting' value="checked">
 	<input type='hidden' name='meeting_status' value="1">

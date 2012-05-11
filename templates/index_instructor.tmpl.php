@@ -70,10 +70,10 @@
 			<tr onkeydown="document.form['n<?php echo $row['news_id']; ?>'].checked = true; rowselect(this);" onmousedown="document.form['n<?php echo $row['message']; ?>'].checked = true; rowselect(this);" id="r_<?php echo $row['message']; ?>">
 			
 				<td>
-				<input type="hidden" name="meetingId" value="<?php echo $row['meeting_id']; ?>" />
+				<!-- <input type="hidden" name="meetingId" value="<?php echo $row['meeting_id']; ?>" /> -->
 				<input type="radio" name="aid" value="<?php echo $row['meeting_id']; ?>" id="<?php echo $row['meeting_id']; ?>" /></td>
 				<td><label for="<?php echo $row['meeting_id']; ?>"><?php echo $row['course_name']; ?></label></td>
-				<td><?php echo htmlentities_utf8($row['message']); ?></td>
+				<td><?php echo html_entity_decode($row['message']); ?></td>
 				<td><?php echo $row['course_timing']; ?></td>
 				<?php if($row['status'] == "3") { ?>
 						<td><?php echo _AT('bbb_meeting_ended'); ?></td>

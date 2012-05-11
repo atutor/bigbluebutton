@@ -31,7 +31,7 @@ require("bbb_atutor.lib.php");
 
 if($_SESSION['course_id'] == -1){
 	// if the admin started the meeting, admin ends it
-	if($_GET['mod'] = $_SESSION['login']){
+	if($_GET['mod'] == $_SESSION['login']){
 		$meeting_id = $_GET['meeting_id'];
 		$modpwd = "mp";
 		bbb_end_meeting($meeting_id,$modpwd);
@@ -53,9 +53,9 @@ if($_SESSION['course_id'] == -1){
 
 authenticate(AT_PRIV_BIGBLUEBUTTON);
 
-
+//debug($_GET);
 if(isset($_GET['delete'])){
-	if($_GET['meetingId'] == ''){
+	if($_GET['aid'] == ''){
 		$msg->addError('SELECT_MEETING');
 	} else {
 		$confirm_delete = 'true';
@@ -76,7 +76,7 @@ if(isset($_GET['edit'])){
 // End and existing meeting when the instructor logs out
 
 if($_SERVER['HTTP_REFERER'] == $_config['bbb_url']."/client/BigBlueButton.html"){
-	if($_GET['mod'] = $_SESSION['login']){
+	if($_GET['mod'] == $_SESSION['login']){
 
 		$meeting_id = $_GET['meeting_id'];
 		$modpwd = "mp";
@@ -159,10 +159,10 @@ require (AT_INCLUDE_PATH.'header.inc.php');
 
 if(isset($_GET['delete']) && isset($confirm_delete)){
 
-	if($_GET['meetingId'] == ''){
+	if($_GET['aid'] == ''){
 		$msg->addError('SELECT_MEETING');
 	}else {
-		$hidden_vars['meetingId'] = $_GET['meetingId'];
+		$hidden_vars['meetingId'] = $_GET['aid'];
 		$msg->addConfirm("BBB_DELETE_CONFIRM", $hidden_vars); 
 		$msg->printConfirm();
 	}

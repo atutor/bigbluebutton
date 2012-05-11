@@ -72,7 +72,7 @@
 	?>
 		
 			<tr onkeydown="document.form['n<?php echo $row['news_id']; ?>'].checked = true; rowselect(this);" onmousedown="document.form['n<?php echo $row['message']; ?>'].checked = true; rowselect(this);" id="r_<?php echo $row['message']; ?>">
-				<td><label for="n<?php echo $row['news_id']; ?>"><?php echo htmlentities_utf8($row['message']); ?></label></td>
+				<td><label for="n<?php echo $row['news_id']; ?>"><?php echo html_entity_decode($row['message']); ?></label></td>
 				<td><?php echo $row['course_timing']; ?></td>
 				
 				<?php if($row['status'] == "3") { ?>

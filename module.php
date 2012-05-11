@@ -47,8 +47,9 @@ if (admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON, TRUE) || admin_authenticate(
 	$this->_pages['mods/bigbluebutton/join_meeting_admin.php']['parent'] = 'mods/bigbluebutton/index_admin.php';
 	$this->_pages['mods/bigbluebutton/create_edit_meeting_admin.php']['title_var'] = 'bbb_create_edit_meeting';
 	$this->_pages['mods/bigbluebutton/create_edit_meeting_admin.php']['parent']   = 'mods/bigbluebutton/index_admin.php';
-	$this->_pages['mods/bigbluebutton/index_admin.php']['children']   = array('mods/bigbluebutton/create_edit_meeting_admin.php');
-
+	$this->_pages['mods/bigbluebutton/index_admin.php']['children']   = array('mods/bigbluebutton/create_edit_meeting_admin.php','mods/bigbluebutton/bbb_admin_config.php');
+	$this->_pages['mods/bigbluebutton/bbb_admin_config.php']['title_var'] = 'bbb_config';
+	$this->_pages['mods/bigbluebutton/bbb_admin_config.php']['parent']   = 'mods/bigbluebutton/index_admin.php';
 }
 
 /*******

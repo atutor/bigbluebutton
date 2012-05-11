@@ -62,7 +62,7 @@ if($_REQUEST['create']){
 	if($_REQUEST['course_time'] !='' && $_REQUEST['course_message'] !=''){
 		$bbb_meeting_id = intval($_REQUEST[meeting_id]);
 		$bbb_meeting_name = $addslashes($_REQUEST['course_name']);
-		$bbb_message = $addslashes($_REQUEST['course_message']);
+		$bbb_message = htmlentities_utf8($addslashes($_REQUEST['course_message']));
 		$bbb_meeting_time = $addslashes($_REQUEST['course_time']);
 		$bbb_meeting_status = intval($_REQUEST['meeting_status']);
 		$bbb_course_id =  intval($_REQUEST['course_id']);
@@ -95,17 +95,17 @@ if(isset($_REQUEST['meeting_id'])){
 	$result = mysql_query($sql, $db);
 
 	while($row = mysql_fetch_assoc($result)){
-		$meeting_id  = $row['meeting_id'];
+		$this_meeting_id  = $row['meeting_id'];
 		$bbb_course_id  = $row['course_id'];
 		$meeting_name = $row['course_name'];
 		$meeting_time = $row['course_timing'];
 		$meeting_status = $row['status'];
-		$course_message = htmlentities_utf8($row['message']);
-		//debug($meeting_status);
+		$course_message = htmlentities_utf8($addslashes($row['message']));
 	}
+
 	?>
 
-	<div class="input-form">
+	<div class="input-form"  style="padding:1em;">
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 	<input type='hidden' name='create_classroom' value="checked">
 
@@ -114,18 +114,20 @@ if(isset($_REQUEST['meeting_id'])){
 			<dt><label for="course_title"><?php echo _AT('bbb_course_title'); ?></label></dt>
 			<dd>
 			<?php
-				$sql = "SELECT title, course_id from ".TABLE_PREFIX."courses";
-				$result = mysql_query($sql, $db);
+				$sql2 = "SELECT title, course_id from ".TABLE_PREFIX."courses";
+				$result2 = mysql_query($sql2, $db);
+
 			?>
 			<select name="course_id">
 			<?php
-				while($row = mysql_fetch_assoc($result)){
-					if($bbb_course_id == $row['course_id']){
+				while($row2 = mysql_fetch_assoc($result2)){
+					$selected = '';
+
+					if($bbb_course_id == $row2['course_id']){
 					 $selected = ' selected="selected"';
 					}
-					echo '<option value="'.$row['course_id'].'"  '.$selected.'>'.$row['title'].'</option>';
+					echo '<option value="'.$row2['course_id'].'"  '.$selected.'>'.$row2['title'].'</option>';
 				}
-			
 			?>
 			
 			</select></dd>
@@ -134,7 +136,7 @@ if(isset($_REQUEST['meeting_id'])){
 		<dt><label for="time"><?php echo _AT('bbb_meeting_time'); ?></label></dt>
 			<dd><input type="text" name="course_time" id="time" value="<?php echo $meeting_time; ?>"/></dd>
 		<dt><label for="message"><?php echo _AT('bbb_message'); ?></label></dt>
-			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo htmlentities_utf8($course_message); ?></textarea></dd>
+			<dd><textarea name="course_message" id="message" rows="2"  cols="20"><?php echo html_entity_decode($addslashes($course_message)); ?></textarea></dd>
 			
 		<dt><label for="time"><?php echo _AT('bbb_meeting_status'); ?></label></dt>
 			<dd><select name="meeting_status">
@@ -150,7 +152,7 @@ if(isset($_REQUEST['meeting_id'])){
     </div>
 <?php }else{ ?>
 
-	<div class="input-form">
+	<div class="input-form" style="padding:1em;">
 	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="get" name="form">
 	<input type='hidden' name='create_meeting' value="checked">
 	<input type='hidden' name='meeting_status' value="1">
