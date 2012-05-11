@@ -5,19 +5,19 @@ For BigBlueButton specific documentation see:
 http://www.bigbluebutton.org/overview/
 
 Prerequisite:
-A functioning BigBlueButton server
+A functioning BigBlueButton server, It's URL, and it's security SALT 
 
 Installation:
 1) Unzip the module into the ATutor mods/ directory to create a bigbluebutton sub-directory.
 2) Login to ATutor as the administrator
-3) Click Modules tab, then Install Module. The module you just unzipped should appear near the top of the screen.
+3) Click the Modules tab, then Install Module. The module you just unzipped should be listed near the top of the screen.
 4) Click Install Module and follow the instructions to install. 
-5) Once Installed it will be listed with the other modules, though Disabled. Select the module and click the Enable button below.
+5) Once Installed it will be listed with the other modules, though Disabled. Select the module and click the Enable button below to turn it on.
 5) Open the BigBlueButton tab above that was added when the module was enabled
-6) Enter the URL to the BigBlueButton installation
-7) Enter the SALT security hash found in the BigBlueButton's bigbluebutton.properties file of your BigBlueButton installation. Look for the value of "beans.dynamicConferencceService.securitySalt". 
+6) Click the BigBlueButton Configuration tab and enter the base URL to the BigBlueButton installation
+7) Enter the SALT security hash found in the BigBlueButton's bigbluebutton.properties file of your BigBlueButton installation. Look for the value of "beans.dynamicConferencceService.securitySalt". This file is general found at: /var/lib/tomcat6/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties
 8) Save those values to finish the installation
-9) Optionally set the maximum number of recording per course, or leave as "0" to disable recordings.
+9) Optionally set the maximum number of recording per course, or leave as "0" to disable recordings. 
 
 
 
@@ -31,24 +31,26 @@ For Instructors
 3) Under the Manage tab when in a course, click on the BigBlueButton link.
 4) Click Create Meeting to have the create form appear. Enter a meeting title, time and a meeting description and press the Create Meeting button.
 5) The created meeting will be listed in the table below, with a link to join the meeting, or to record the meeting, if recording has been enabled by the administrator.
-6) Click the Edit button to change meeting details, or click Delete to remove the meeting and any recordings.
+6) Choose a radio button beside a listed meeting, then click the Edit button to change meeting details, or click Delete to remove the meeting and any recordings.
 7) Click the X icon beside a recording to delete just the recording for a meeting (if enable and a recording exists), but to keep the meeting details.
-8) Click on Join Conference through the Manage BigBlueButton screen to have moderator privileges granted (login through the Student screen provides attendee privileges only)
-9) Click of Record Conference to join a meeting as a moderator, and start recording. The number of recordings may be limited by the administrator. Delete older recordings before creating new ones if you receive a message that the maximum number of recordings has been reached.
-10) If you are the person who started a meeting, the meeting will end when you logout of the meeting, and will cease to be available to others. A meeting can be reenabled and started again later by choosing the associated radio button, then pressing Edit and resetting the status to Pending. (admins and instructors can start meetings).
+8) Click on Join Conference through the Manage BigBlueButton screen to have moderator privileges granted (login through the Student screen provides attendee privileges only). If the meeting has been previously started by another person, such as the site administrator, the instructor will join as an attendee only. The moderator or creator of the meeting, can hand moderator privileges to the instructor once he/she has logged into the meeting. Only the person who started a meeting can end a meeting, by login out of the meeting. Any attendees left in the meeting when the moderator logs out, will themselves be logged out.
+9) Click of Record Conference to join a meeting as a moderator, and start recording. The number of recordings may be limited by the administrator. Delete older recordings before creating new ones if you receive a message that the maximum number of recordings has been reached. Recording are processed after a meeting has ended, and may take some time before they become available for viewing. 
+10) A meeting can be reenabled and started again later by choosing the associated radio button, then pressing Edit and resetting the status to Pending. (admins and instructors can start meetings).
+
 
 
 For Students
 ------------
-1) Click on the BigBlueButton tab at the top of the screen, or the BigBlueButton module link on the coure homepage, whichever is enabled for the course.
+1) Click on the BigBlueButton tab at the top of the screen, or the BigBlueButton module link on the course homepage, whichever is enabled for the course.
 2) On the screen that opens, click on the Join Conference link next to the meeting listed 
 3) If a meeting has Ended, it will not be available to access. 
 4) If a meeting is Pending, a student must wait for a moderator to start the meeting.
-5) If recordings are available, click on the View Recording link next to a meeting listing to view them.
+5) If a meeting is Running, a student may click Join Conference to access the meeting.
+6) If recordings are available, click on the View Recording link next to a meeting listing to view them.
 
 For Administrators
 ------------------
-1) Under the BigBlueBotton tab created in the Administration area of ATutor after the module is installed and enabled, enter the URL to the BBB installation and the security SALT.
+1) Under the BigBlueBotton tab created in the Administration area of ATutor after the module is installed and enabled, enter the URL to the BBB installation and the security SALT in the BigBlueButton Configration.
 2) Set the Maximum number of recordings per course to control space used by each course. Set to 0 to disable recordings.
 3) Admin's can create and start meetings like instructors can, described above.
 4) Admin's can delete recordings and meetings like instructors can.
@@ -58,12 +60,9 @@ For Administrators
 
 Todo
 ----
-1. Extend module for multiple meetings per course (add a meeting_id field to the db) DONE 
-2. Add group BBB meetings
-3. Add record/playback meeting feature (available in BBB .8) DONE
-4. Update time with select menus for choosing formated date/time
-5. Add a title field to the db for short description. Message can be used for a longer description DONE
-6. Setup recordings DONE
+1. Add group BBB meetings
+2. Update time with select menus for choosing formated date/time
+
 
 Also see BBB-API-buddy
 https://github.com/omarshammas/bigbluebutton-API-Buddy
