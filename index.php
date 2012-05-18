@@ -34,6 +34,9 @@ if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
 	$savant->assign('bbb_recordURL', $bbb_recordURL);
 	$savant->display('templates/index.tmpl.php');
 
+} else{
+
+	$msg->printFeedbacks('NO_MEETINGS');
 }
 
  require (AT_INCLUDE_PATH.'footer.inc.php'); ?>

@@ -62,7 +62,7 @@ INSERT INTO `language_text` VALUES ('en', '_module','bbb_max_recording','Maximum
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_MEETING_ENDED','Meeting has been ended. To re-enable choose the radio button for the meeting and press edit, then in the Status menu choose Pending. ',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_MEETING_ENDED_OTHER','You have successfully exited the meeting, though it continues to run. The meeting will be ended when the moderator logs out.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_RECORDING_IN_PROGRESS', 'Recordings may take a while to process before becoming available, if enabled for this meeting.',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_NO_MEETINGS','No meetings are yet available.',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_NO_MEETINGS','No meetings are available.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_CONFIRM_DELETE_RECORDING','Are you sure you want to delete this recording?',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_SELECT_MEETING','No meeting was selected.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_INFOS_MAX_REACHED','This meeting will not be recorded because the maximum number of recordings has been reached for this course. To record this meeting, delete an existing recording, and start again.',NOW(),'');

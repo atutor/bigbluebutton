@@ -73,7 +73,6 @@ if (isset($_POST['submit_no'])) {
 
 if($_REQUEST['delete_meeting'] > "0"){
 	$delete_meeting = intval($_REQUEST['delete_meeting']);
-	echo $delete_meeting."test";
 	if(isset($_REQUEST['delete_meeting'])) {
 		 require (AT_INCLUDE_PATH.'header.inc.php');
 	

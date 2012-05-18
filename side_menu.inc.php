@@ -43,6 +43,9 @@ if (mysql_num_rows($result) > 0) {
 	}
 		echo "</ul>";
 
+}else{
+
+	echo _AT('none_found');
 }
 
 $savant->assign('dropdown_contents', ob_get_contents());
