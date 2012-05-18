@@ -29,11 +29,26 @@ if(!$_SESSION['is_admin']){
 */
 
 
-require (AT_INCLUDE_PATH.'header.inc.php'); 
+
 require_once( "config.php");
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require("bbb_atutor.lib.php");
+
+// Check if the users is attempting to access a meeting that has ended
+if(isset($_GET['meeting_id'])){
+$meeting_id = intval($_GET['meeting_id']);
+$sql = "SELECT status from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id ='$meeting_id'";
+$result = mysql_query($sql, $db);
+$row = mysql_fetch_assoc($result);
+	if($row['status'] == "3"){
+		$msg->addInfo("MEETING_ENDED");
+		header("Location: index.php");
+		exit;
+	}
+}
+
+require (AT_INCLUDE_PATH.'header.inc.php'); 
 
 $_attendeePassword = "ap";   
 $_logoutUrl = $_base_href.'mods/bigbluebutton/index.php';

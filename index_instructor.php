@@ -24,6 +24,7 @@ require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require("bbb_atutor.lib.php");
 
+
 ////////
 // A hack to redirect student to the index.php file in the module
 // Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
@@ -32,7 +33,7 @@ require("bbb_atutor.lib.php");
 if($_SESSION['course_id'] == -1){
 	// if the admin started the meeting, admin ends it
 	if($_GET['mod'] == $_SESSION['login']){
-		$meeting_id = $_GET['meeting_id'];
+		$meeting_id = intval($_GET['meeting_id']);
 		$modpwd = "mp";
 		bbb_end_meeting($meeting_id,$modpwd);
 		global $response;

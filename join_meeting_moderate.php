@@ -33,6 +33,18 @@ require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require("bbb_atutor.lib.php");
 
+// Check if the users is attempting to access a meeting that has ended
+if(isset($_GET['meeting_id'])){
+$meeting_id = intval($_GET['meeting_id']);
+$sql = "SELECT status from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id ='$meeting_id'";
+$result = mysql_query($sql, $db);
+$row = mysql_fetch_assoc($result);
+	if($row['status'] == "3"){
+		$msg->addInfo("MEETING_ENDED_MOD");
+		header("Location: index_instructor.php");
+		exit;
+	}
+}
 $_courseId=$_SESSION['course_id'];
 $_courseTiming=$_POST['course_timing'];
 $_courseMessage=$_POST['course_message'];
