@@ -35,22 +35,25 @@ require("bbb_atutor.lib.php");
 
 // Check if the users is attempting to access a meeting that has ended
 if(isset($_GET['meeting_id'])){
-$meeting_id = intval($_GET['meeting_id']);
-$sql = "SELECT status from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id ='$meeting_id'";
-$result = mysql_query($sql, $db);
-$row = mysql_fetch_assoc($result);
+    $meeting_id = intval($_GET['meeting_id']);
+
+    $sql = "SELECT status from %sbigbluebutton WHERE meeting_id =%d";
+    $row = queryDB($sql, array(TABLE_PREFIX, $meeting_id), TRUE);
+    
 	if($row['status'] == "3"){
 		$msg->addInfo("MEETING_ENDED_MOD");
 		header("Location: index_instructor.php");
 		exit;
 	}
 }
+
 $_courseId=$_SESSION['course_id'];
 $_courseTiming=$_POST['course_timing'];
 $_courseMessage=$_POST['course_message'];
 $_moderatorPassword="mp";
 $_attendeePassword="ap";   
 $_logoutUrl= $_base_href.'mods/bigbluebutton/index_instructor.php';
+
 if($_SESSION['course_id'] == "-1"){
 	$username=$_SESSION['login'];
 }else{
@@ -59,6 +62,7 @@ if($_SESSION['course_id'] == "-1"){
 
 $meetingID=$_GET['meetingId'];
 $bbb_welcome = _AT('bbb_welcome');
+
 if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
 	//alls well
 }else{
@@ -69,12 +73,14 @@ if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_ADMI
 }
 if(isset($_GET['record'])){
 	// Check to see if max recordings has been reached
-	$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_courseId'";
-	$result = mysql_query($sql,$db);
+	
+	$sql = "SELECT * from %sbigbluebutton WHERE course_id = %d";
+	$rows_meetings = queryDB($sql, array(TABLE_PREFIX, $_courseId));
+	
 	$this_recordings = '';
 	$recordings = '0';
-	while($row = mysql_fetch_assoc($result)){
-
+	
+	foreach($rows_meetings as $row){
 		$this_recording = bbb_get_recordings($row['meeting_id']);
 		if(preg_match("/http/",$this_recording)){
 			$recordings = ($recordings+1);
@@ -98,9 +104,7 @@ require (AT_INCLUDE_PATH.'header.inc.php');
 <p style="border:1px solid #cccccc; padding:1em;border-radius:.3em;background-color:#eeeeee;"><?php echo _AT('bbb_continue_text'); ?></p>
 
 <?php
-
-$bbb_joinURL = bbb_join_meeting_moderate($_attendeePassword,$_moderatorPassword,$_logoutUrl,$meetingID, $record, $username);
-
+    $bbb_joinURL = bbb_join_meeting_moderate($_attendeePassword,$_moderatorPassword,$_logoutUrl,$meetingID, $record, $username);
 ?>
 <p> <?php echo _AT('bbb_continue_yes'); ?>  <a href="<?php echo $bbb_joinURL;?>"><?php echo _AT('bbb_yes_join');  ?></a> <?php echo _AT('or'); ?> <a href="<?php echo $_SERVER['HTTP_REFERER']; ?>"><?php echo _AT('bbb_no_cancel');  ?></a>
 

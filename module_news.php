@@ -19,10 +19,11 @@ function bigbluebutton_news() {
 		return $news;
 	} 
 
-	$sql = 'SELECT * FROM '.TABLE_PREFIX.'bigbluebutton WHERE course_id IN '.$enrolled_courses;
-	$result = mysql_query($sql, $db);
-	if($result){
-		while($row = mysql_fetch_assoc($result)){
+    $sql = 'SELECT * FROM %sbigbluebutton WHERE course_id IN %s';
+	$rows_meetings = queryDB($sql, array(TABLE_PREFIX, $enrolled_courses));
+	
+	if(count($rows_meetings) > 0){
+		foreach($rows_meetings as $row){
 			$news[] = array('time'=>htmlentities_utf8($row['course_timing']), 
 							'object'=>$row, 
 							'alt'=>_AT('bigbluebutton'),

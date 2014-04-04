@@ -32,16 +32,15 @@
 </tr>
 </tfoot>
 <tbody>
-	<?php if ($row = mysql_fetch_assoc($this->result)): 
-		$i = 0;
-	
+	<?php 
+	if(count($this->rows_meetings) > 0):
+	    $i = 0;
 	/////////////////////
 	// Output a row for each available meeting	
-	 do { 
-		
+
+	foreach($this->rows_meetings as $row){	
 	/////////////////
 	// Get the meeting info
-
 	bbb_get_meeting_info($row['meeting_id']);
 	
 	//////////////// end get meeting info
@@ -110,8 +109,7 @@
 			</tr>
 		<?php 
 			$i = $i++;
-			} while ($row = mysql_fetch_assoc($this->result)); 
-			
+	}		
 	////////////////// end output of each available meeting
 			?>
 

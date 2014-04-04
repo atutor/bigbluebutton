@@ -77,6 +77,12 @@ $this->_pages['mods/bigbluebutton/index.php']['title_var'] = 'bigbluebutton';
 $this->_pages['mods/bigbluebutton/index.php']['img']       = 'mods/bigbluebutton/bigbluebutton.png';
 $this->_pages['mods/bigbluebutton/view_meeting.php']['title_var'] = 'bbb_view_meeting';
 
-
+if($_SESSION['is_admin'] > 0 || authenticate(AT_PRIV_STYLES, TRUE)){	
+    $this->_pages_i['mods/bigbluebutton/index.php']['title_var'] = 'bigbluebutton';
+    $this->_pages_i['mods/bigbluebutton/index.php']['parent']   = 'tools/index.php';
+    $this->_pages_i['mods/bigbluebutton/create_edit_meeting.php']['title_var'] = 'bbb_create_edit_meeting';
+    $this->_pages_i['mods/bigbluebutton/create_edit_meeting.php']['parent']   = 'mods/bigbluebutton/index_instructor.php';
+    $this->_pages_i['mods/bigbluebutton/index.php']['children']   = array('mods/bigbluebutton/create_edit_meeting.php');
+}
 
 ?>

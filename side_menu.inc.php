@@ -3,8 +3,6 @@
 /* BigBlueButton module for ATutor                              */
 /* https://github.com/nishant1000/BigBlueButton-module-for-ATutor*/
 /*                                                              */
-/* This module allows to search OpenLearn for educational       */
-/* content.														*/
 /* Author: Greg Gay										*/
 /* This program is free software. You can redistribute it and/or*/
 /* modify it under the terms of the GNU General Public License  */
@@ -19,13 +17,12 @@ ob_start();
 global $db, $_base_href, $_base_path, $msg, $_config, $savant;
 $link_limit = 3;		// Number of links to be displayed on "detail view" box
 
-$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_SESSION[course_id]'";
-$result = mysql_query($sql, $db);
+$sql = "SELECT * from %sbigbluebutton WHERE course_id = %d";
+$rows_meetings = queryDB($sql, array(TABLE_PREFIX, $_SESSION['course_id']));
 
-
-if (mysql_num_rows($result) > 0) {
+if(count($rows_meetings) > 0){
 	echo "<ul>";
-	while ($row = mysql_fetch_assoc($result)) {
+	foreach($rows_meetings as $row){
 		/****
 		* SUBLINK_TEXT_LEN, VALIDATE_LENGTH_FOR_DISPLAY are defined in include/lib/constance.lib.inc
 		* SUBLINK_TEXT_LEN determins the maxium length of the string to be displayed on "detail view" box.

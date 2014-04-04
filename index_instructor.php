@@ -38,8 +38,9 @@ if($_SESSION['course_id'] == -1){
 		bbb_end_meeting($meeting_id,$modpwd);
 		global $response;
 		// Update the db to set the meeting to ended	
-		$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
-		$result = mysql_query($sql, $db);
+		$sql = "UPDATE %sbigbluebutton set status='3' WHERE meeting_id = %d";
+		$result = queryDB($sql, array(TABLE_PREFIX, $meeting_id));
+		
 		$msg->addFeedback('MEETING_ENDED');
 	}else {
 		$msg->addFeedback('MEETING_ENDED_OTHER');
@@ -54,7 +55,6 @@ if($_SESSION['course_id'] == -1){
 
 authenticate(AT_PRIV_BIGBLUEBUTTON);
 
-//debug($_GET);
 if(isset($_GET['delete'])){
 	if($_GET['aid'] == ''){
 		$msg->addError('SELECT_MEETING');
@@ -85,8 +85,9 @@ if($_SERVER['HTTP_REFERER'] == $_config['bbb_url']."/client/BigBlueButton.html")
 		
 		global $response;
 		// Update the db to set the meeting to ended	
-		$sql = "UPDATE ".TABLE_PREFIX."bigbluebutton set status='3' WHERE meeting_id = '$meeting_id'";
-		$result = mysql_query($sql, $db);
+		$sql = "UPDATE %sbigbluebutton set status='3' WHERE meeting_id = %d";
+		$result = queryDB($sql, array(TABLE_PREFIX, $meeting_id));
+
 		if(BBB_MAX_RECORDINGS > 0){
 			$msg->addFeedback('MEETING_ENDED');
 			$msg->addFeedback('RECORDING_IN_PROGRESS');
@@ -111,8 +112,8 @@ if (isset($_POST['submit_no'])) {
 
 	bbb_delete_meeting($meetingId);
 
-	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
-	$result = mysql_query($sql,$db);
+	$sql ="DELETE from %sbigbluebutton WHERE meeting_id = %d";
+	$result = queryDB($sql, array(TABLE_PREFIX, $meetingId));	
 	
 	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
@@ -123,7 +124,6 @@ if (isset($_POST['submit_no'])) {
 // Delete BBB meeting recording after confirming
 if($_GET['delete_meeting'] > "0"){
 	$delete_meeting = intval($_GET['delete_meeting']);
-	//echo $delete_meeting;
 	if(isset($_GET['delete_meeting'])) {
 		 require (AT_INCLUDE_PATH.'header.inc.php');
 	
@@ -173,13 +173,12 @@ $_courseId=$_SESSION['course_id'];
 $bbb_recordURL = $result['0']['playbackFormatUrl'];
 $bbb_deleteURL = $result['0']['recordId'];
 
-$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_course_id'";
-$result = mysql_query($sql, $db);
+$sql = "SELECT * from %sbigbluebutton WHERE course_id = %d";
+$rows_meetings = queryDB($sql, array(TABLE_PREFIX, $_course_id));
 
-if(mysql_num_rows($result) != 0){
-
+if(count($rows_meetings) != 0){
 	$savant->assign('bbb', $bbb);
-	$savant->assign('result', $result);
+	$savant->assign('rows_meetings', $rows_meetings);
 	$savant->assign('bbb_joinURL', $bbb_joinURL);
 	$savant->assign('bbb_recordURL', $bbb_recordURL);
 	$savant->assign('bbb_deleteURL', $bbb_deleteURL);

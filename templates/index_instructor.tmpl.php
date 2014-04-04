@@ -30,13 +30,14 @@
 </tr>
 </tfoot>
 <tbody>
-	<?php if ($row = mysql_fetch_assoc($this->result)): 
+	<?php 
+	if(count($this->rows_meetings) > 0):
 		$i = 0;
 	
 	/////////////////////
 	// Output a row for each available meeting	
-	 do { 
-		
+
+	foreach($this->rows_meetings as $row){	
 	/////////////////
 	// Get the meeting info
 	
@@ -96,7 +97,12 @@
 				<?php } ?>
 				<?php if(BBB_MAX_RECORDINGS > 0){ ?>
 					<?php if($bbb_recordURL != ''){ ?>
-						<td><?php echo '<a href="mods/bigbluebutton/view_meeting.php?view_meeting='.$row['meeting_id'].'" target="_top">'._AT('bbb_view_recording'); ?></a><!-- <a href="mods/bigbluebutton/pub_meeting.php?pub_meeting=<?php echo $row['meeting_id'];?>" target="_top"><?php echo _AT('bbb_publish_recording'); ?></a> -->
+						<td>
+						<?php
+                        $bbb_recordURL = bbb_get_recordings($row['meeting_id']); 
+						?>
+						<a style="text-decoration:underline;" tabindex="0" onkeypress="javascript:window.open('<?php echo $bbb_recordURL; ?>', 'BBBWindow', 'width=850,height=800')" onclick="javascript:window.open('<?php echo $bbb_recordURL; ?>', 'BBBWindow', 'width=800,height=800')"><?php echo _AT('bbb_view_recording'); ?></a>
+
 						<a href="<?php echo $_SERVER['PHP_SELF']; ?>?delete_meeting=<?php echo $row['meeting_id']; ?>" >
 						<img src="<?php echo $this->base_href; ?>/images/x.gif" alt="<?php echo _AT('bbb_delete_recording'); ?>" title="<?php echo _AT('bbb_delete_recording'); ?>" style="float:right;"/></a></td>
 						<?php }else{ ?>
@@ -106,8 +112,7 @@
 			</tr>
 		<?php 
 			$i = $i++;
-			} while ($row = mysql_fetch_assoc($this->result)); 
-			
+	}	
 	////////////////// end output of each available meeting
 			?>
 

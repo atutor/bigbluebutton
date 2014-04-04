@@ -18,18 +18,6 @@ define('AT_INCLUDE_PATH', '../../include/');
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 
-// A hack to redirect student to the index.php file in the module
-// Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
-// Test again when bbb0.8 comes out.
-/*
-if(!$_SESSION['is_admin']){
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
-	exit;
-}
-*/
-
-
-
 require_once( "config.php");
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();
@@ -37,10 +25,10 @@ require("bbb_atutor.lib.php");
 
 // Check if the users is attempting to access a meeting that has ended
 if(isset($_GET['meeting_id'])){
-$meeting_id = intval($_GET['meeting_id']);
-$sql = "SELECT status from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id ='$meeting_id'";
-$result = mysql_query($sql, $db);
-$row = mysql_fetch_assoc($result);
+    $meeting_id = intval($_GET['meeting_id']);
+    $sql = "SELECT status from %sbigbluebutton WHERE meeting_id = %d";
+    $row = queryDB($sql, array(TABLE_PREFIX, $meeting_id), TRUE);
+    
 	if($row['status'] == "3"){
 		$msg->addInfo("MEETING_ENDED");
 		header("Location: index.php");
@@ -53,7 +41,7 @@ require (AT_INCLUDE_PATH.'header.inc.php');
 $_attendeePassword = "ap";   
 $_logoutUrl = $_base_href.'mods/bigbluebutton/index.php';
 $username = $_SESSION['login'];
-//$username = get_login(intval($_SESSION['member_id']));
+
 $meetingID = intval($_GET['meetingId']);
 $response = bbb_get_meeting_info($meetingID);
 $bbb_joinURL = bbb_join_meeting($meetingID, $username, $_attendeePassword);

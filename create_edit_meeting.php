@@ -18,14 +18,6 @@ define('AT_INCLUDE_PATH', '../../include/');
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 
-// A hack to redirect student to the index.php file in the module
-// Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
-// Test again when bbb0.8 comes out.
-
-//if(!$_SESSION['is_admin']){
-//	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
-//	exit;
-//}
 if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_BIGBLUEBUTTON, TRUE)){
 	//alls well
 }else{
@@ -34,28 +26,37 @@ if (authenticate(AT_PRIV_BIGBLUEBUTTON) || admin_authenticate(AT_ADMIN_PRIV_BIGB
 	require (AT_INCLUDE_PATH.'footer.inc.php'); 
 	exit;
 }
+tool_origin();
 /////////////////////////////
 // Create BBB Meeting
 
-
-if($_GET['create']){
-//debug($_GET);
+if (isset($_GET['cancel'])) {
+        $msg->addFeedback('CANCELLED');
+        $return_url = $_SESSION['tool_origin']['url'];
+        tool_origin('off');
+		header('Location: '.$return_url);
+		exit;
+} else if($_GET['create']){
 	if($_GET['course_time'] !='' && $_GET['course_message'] !=''){
 		$bbb_meeting_name = $addslashes($_GET['course_name']);
 		$bbb_message = $addslashes($_GET['course_message']);
 		$bbb_meeting_time = $addslashes($_GET['course_time']);
 		
-		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('','$_SESSION[course_id]','$bbb_meeting_name', '$bbb_meeting_time','$bbb_message ','1')";
-		
-		if($result = mysql_query($sql,$db)){
+		$sql ="INSERT into %sbigbluebutton VALUES ('',%d,'%s', '%s','%s','1')";	
+		$result = queryDB($sql, array(TABLE_PREFIX, $_SESSION['course_id'], $bbb_meeting_name, $bbb_meeting_time, $bbb_message));
+
+		if($result > 0){
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 			if($_SESSION['is_admin']){
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
-			exit;
+                $return_url = $_SESSION['tool_origin']['url'];
+                tool_origin('off');
+		        header('Location: '.$return_url);
+		        exit;
 			}else{
-			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
-			exit;
-			
+
+			    tool_origin('off');
+			    header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
+			    exit;
 			}
 		}else{
 			$msg->addError('ACTION_FAILED');
@@ -74,10 +75,11 @@ if($_GET['create']){
 		$bbb_message = htmlentities_utf8($addslashes($_GET['course_message']));
 		$bbb_meeting_time = $addslashes($_GET['course_time']);
 		$bbb_meeting_status = intval($_GET['meeting_status']);
+
+		$sql ="UPDATE %sbigbluebutton SET course_name = '%s', message = '%s', course_timing = '%s', status = %d WHERE meeting_id = %d";
+		$result = queryDB($sql, array(TABLE_PREFIX, $bbb_meeting_name, $bbb_message, $bbb_meeting_time, $bbb_meeting_status, $_GET['meeting_id']));
 		
-		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET course_name = '$bbb_meeting_name', message = '$bbb_message', course_timing = '$bbb_meeting_time', status = '$bbb_meeting_status' WHERE meeting_id = '$_GET[meeting_id]'";
-	
-		if($result = mysql_query($sql, $db)){
+		if($result > 0){				
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_instructor.php');
 			exit;
@@ -99,16 +101,16 @@ if($_GET['create']){
 
 if(isset($_GET['meeting_id'])){ 
 	$meeting_id = intval($_GET['meeting_id']);
-	$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meeting_id'";
-	$result = mysql_query($sql, $db);
 
-	while($row = mysql_fetch_assoc($result)){
+	$sql = "SELECT * from %sbigbluebutton WHERE meeting_id = %d";
+	$rows_meetings = queryDB($sql, array(TABLE_PREFIX, $meeting_id));
+	
+	foreach($rows_meetings as $row){
 		$meeting_id  = $row['meeting_id'];
 		$meeting_name = $row['course_name'];
 		$meeting_time = $row['course_timing'];
 		$meeting_status = $row['status'];
 		$course_message = html_entity_decode($row['message']);
-		//debug($meeting_status);
 	}
 	?>
 
@@ -135,6 +137,7 @@ if(isset($_GET['meeting_id'])){
 		</dl>
 
     <input type="submit" value="<?php echo _AT('bbb_edit_meeting'); ?>" name='editthis' class="button"/>
+    <input type="submit" value="<?php echo _AT('cancel'); ?>" name='cancel' class="button"/>
     </form>
     </div>
 <?php }else{ ?>
@@ -154,6 +157,7 @@ if(isset($_GET['meeting_id'])){
 		</dl>
 
     <input type="submit" value="<?php echo _AT('bbb_create_meeting'); ?>" name='create' class="button"/>
+    <input type="submit" value="<?php echo _AT('cancel'); ?>" name='cancel' class="button"/>
     </form>
     </div>
 

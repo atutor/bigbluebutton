@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?> 
 <module version="0.1"> 
     <name lang="en">BigBlueButton</name> 
-    <description lang="en">This module enables you to present and record video lectures using BigBlueButton v.8. It is a rewrite of most of the original BBB module for ATutor created by Nishant Kumar.</description> 
+    <description lang="en">For ATutor 2.2+. This module enables you to present and record video lectures using BigBlueButton v.8. It is a rewrite of most of the original BBB module for ATutor created by Nishant Kumar.</description> 
     <maintainers>
         <maintainer> 
             <name>ATutor</name> 
@@ -11,8 +11,8 @@
     <url>https://github.com/atutor/bigbluebutton</url> 
     <license>BSD</license> 
 	<release> 
-        <version>0.4</version> 
-        <date>2012-05-9</date> 
+        <version>0.5</version> 
+        <date>2014-03-27</date> 
         <state>stable</state> 
         <notes>Requires a functioning BigBlueButton .8 server. Once installed and enabled, click on the BigBlueButton Configuration tab and enter the URL to the server installation, and the SALT security hash. See the readme for additional details.</notes> 
     </release> 

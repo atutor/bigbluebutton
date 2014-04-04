@@ -11,7 +11,6 @@
 
 function bbb_end_meeting($meeting_id, $modpwd){
 	global $bbb;
-	//debug($meeting_id);
 	$endParams = array(
 		'meetingId' => $_SERVER['HTTP_HOST'].'-'.$meeting_id, //REQUIRED - We have to know which meeting to end.
 		'password' => $modpwd	//REQUIRED - Must match moderator pass for meeting.
@@ -225,11 +224,6 @@ function bbb_is_meeting_running($meetingId){
 			echo 'Caught exception: ', $e->getMessage(), "\n";
 			$itsAllGood = false;
 		}
-	
-	if ($itsAllGood == true) {
-		//Output results to see what we're getting:
-		//debug($response);
-	}
 	return $response;
 }
 

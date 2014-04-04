@@ -12,6 +12,8 @@
 /****************************************************************/
 // $Id$
 
+// THIS FILE IS DEPRACATED
+exit;
 // 1. define relative path to `include` directory:
 define('AT_INCLUDE_PATH', '../../include/');
 
@@ -29,7 +31,10 @@ $bbb_recordURL = bbb_get_recordings($meeting_id);
 
 require (AT_INCLUDE_PATH.'header.inc.php'); 
 ?>
+<script type="text/javascript">
 
+</script>
+<a tabindex="0" onkeypress="javascript:window.open('<?php echo $bbb_recordURL; ?>', 'BBBWindow', 'width=800,height=800')" onclick="javascript:window.open('<?php echo $bbb_recordURL; ?>', 'BBBWindow', 'width=800,height=800')">View Meeting in New Window</a>
 <iframe src="<?php echo $bbb_recordURL; ?>" height="800px" width="100%" frameborder="0" scrolling="no" style="border:1px solid #cccccc; padding:1em;border-radius:.3em;">
 
 </iframe>

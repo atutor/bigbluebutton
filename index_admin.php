@@ -27,11 +27,11 @@ if(CONFIG_SECURITY_SALT ==''){
 require_once("bbb-api.php");
 $bbb = new BigBlueButton();
 require_once("bbb_atutor.lib.php");
-//debug($_REQUEST);
+
 if(isset($_REQUEST['delete'])){
-//debug($_REQUEST['aid']);
+
 	if($_REQUEST['aid'] == ''){
-	//echo "in here";
+
 		$msg->addError('SELECT_MEETING');
 	} else {
 		$confirm_delete = 'true';
@@ -58,14 +58,18 @@ if (isset($_POST['submit_no'])) {
 
 	bbb_delete_meeting($meetingId);
 
-	$sql ="DELETE from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meetingId'";
-	
-	debug($sql);
-	$result = mysql_query($sql,$db);
-	
-	$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
-	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
-	exit;
+	$sql ="DELETE from %sbigbluebutton WHERE meeting_id = %d";
+	$result = queryDB($sql, array(TABLE_PREFIX, $meetingId));	
+
+	if($result > 0){
+		$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+	    header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
+	    exit;
+	} else{
+	    $msg->addError('BBB_ACTION_FAILED');
+	    header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
+	    exit;
+	}
 }
 
 ////////////////////////
@@ -132,13 +136,13 @@ if(isset($_REQUEST['delete']) && isset($confirm_delete)){
 
 
 <?php
-$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton";
-$result = mysql_query($sql, $db);
 
-if(mysql_num_rows($result) != 0){
+$sql = "SELECT * from %sbigbluebutton";
+$rows_meetings = queryDB($sql, array(TABLE_PREFIX));
 
+if($rows_meetings > 0){
 	$savant->assign('bbb', $bbb);
-	$savant->assign('result', $result);
+	$savant->assign('rows_meetings', $rows_meetings);
 	$savant->assign('response', $response);
 	$savant->assign('bbb_joinURL', $bbb_joinURL);
 	$savant->assign('bbb_recordURL', $bbb_recordURL);
@@ -152,9 +156,8 @@ if(mysql_num_rows($result) != 0){
 
 function get_course_title($course_id){
 	global $db;
-	$sql = "SELECT title FROM ".TABLE_PREFIX."courses WHERE course_id = '$course_id'";
-	$result = mysql_query($sql, $db);
-	$row = mysql_fetch_assoc($result);
+	$sql = "SELECT title FROM %scourses WHERE course_id = %d";
+	$row = queryDB($sql, array(TABLE_PREFIX, $course_id), TRUE);
 	return $row['title'];
 }
 

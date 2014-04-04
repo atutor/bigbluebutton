@@ -29,21 +29,18 @@ if (admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
 }
 /////////////////////////////
 // Create BBB Meeting
-
-
 if($_REQUEST['create']){
-//debug($_REQUEST);
 	if($_REQUEST['course_time'] !='' && $_REQUEST['course_message'] !=''){
 		$bbb_meeting_name = $addslashes($_REQUEST['course_name']);
 		$bbb_message = $addslashes($_REQUEST['course_message']);
 		$bbb_meeting_time = $addslashes($_REQUEST['course_time']);
 		$bbb_course_id = intval($_REQUEST['course_id']);
-		
-		$sql ="INSERT into ".TABLE_PREFIX."bigbluebutton VALUES ('',  '$bbb_course_id','$bbb_meeting_name', '$bbb_meeting_time','$bbb_message ','1')";
-		debug($sql);
-		if($result = mysql_query($sql,$db)){
-			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
+	
+		$sql ="INSERT into %sbigbluebutton VALUES ('',  %d,'%s', '%s','%s','1')";
+        $result = queryDB($sql, array(TABLE_PREFIX, $bbb_course_id, $bbb_meeting_name, $bbb_meeting_time, $bbb_message));
 
+		if($result > 0){
+			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 			exit;
 
@@ -66,10 +63,11 @@ if($_REQUEST['create']){
 		$bbb_meeting_time = $addslashes($_REQUEST['course_time']);
 		$bbb_meeting_status = intval($_REQUEST['meeting_status']);
 		$bbb_course_id =  intval($_REQUEST['course_id']);
-		
-		$sql ="UPDATE ".TABLE_PREFIX."bigbluebutton SET course_id =  '$bbb_course_id', course_name = '$bbb_meeting_name', message = '$bbb_message', course_timing = '$bbb_meeting_time', status = '$bbb_meeting_status' WHERE meeting_id = '$bbb_meeting_id'";
-	
-		if($result = mysql_query($sql, $db)){
+
+		$sql ="UPDATE %sbigbluebutton SET course_id =  '%d', course_name = '%s', message = '%s', course_timing = '%s', status = %d WHERE meeting_id = %d";
+	    $result = queryDB($sql, array(TABLE_PREFIX, $bbb_course_id, $bbb_meeting_name, $bbb_message, $bbb_meeting_time, $bbb_meeting_status, $bbb_meeting_id));
+
+		if($result > 0){
 			$msg->addFeedback('ACTION_COMPLETED_SUCCESSFULLY');
 			header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index_admin.php');
 			exit;
@@ -91,10 +89,11 @@ if($_REQUEST['create']){
 
 if(isset($_REQUEST['meeting_id'])){ 
 	$meeting_id = intval($_REQUEST['meeting_id']);
-	$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id = '$meeting_id'";
-	$result = mysql_query($sql, $db);
 
-	while($row = mysql_fetch_assoc($result)){
+	$sql = "SELECT * from %sbigbluebutton WHERE meeting_id = %d";
+	$rows_meetings = queryDB($sql, array(TABLE_PREFIX, $meeting_id));
+
+	foreach($rows_meetings as $row){
 		$this_meeting_id  = $row['meeting_id'];
 		$bbb_course_id  = $row['course_id'];
 		$meeting_name = $row['course_name'];
@@ -114,13 +113,13 @@ if(isset($_REQUEST['meeting_id'])){
 			<dt><label for="course_title"><?php echo _AT('bbb_course_title'); ?></label></dt>
 			<dd>
 			<?php
-				$sql2 = "SELECT title, course_id from ".TABLE_PREFIX."courses";
-				$result2 = mysql_query($sql2, $db);
 
+				$sql2 = "SELECT title, course_id from %scourses";
+				$rows_courses = queryDB($sql2, array(TABLE_PREFIX));
 			?>
 			<select name="course_id">
 			<?php
-				while($row2 = mysql_fetch_assoc($result2)){
+				foreach($rows_courses as $row2){
 					$selected = '';
 
 					if($bbb_course_id == $row2['course_id']){
@@ -160,12 +159,12 @@ if(isset($_REQUEST['meeting_id'])){
 			<dt><label for="course_title"><?php echo _AT('bbb_course_title'); ?></label></dt>
 			<dd>
 			<?php
-				$sql = 'SELECT title, course_id from '.TABLE_PREFIX.'courses';
-				$result = mysql_query($sql, $db);
+				$sql = 'SELECT title, course_id from %scourses';
+				$rows_titles = queryDB($sql, array(TABLE_PREFIX));
 			?>
 			<select name="course_id">
 			<?php
-				while($row = mysql_fetch_assoc($result)){
+				foreach($rows_titles as $row){
 					if($course_id == $row['course_id']){
 					 $selected = 'selected="selected"';
 					}

@@ -24,7 +24,7 @@ INSERT INTO `language_text` VALUES ('en', '_module','bbb_welcome','You have join
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_edit_meeting','Edit Meeting',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_create_meeting_text','Create Meetings',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_create_meeting','Create Meeting',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_module','bbb_join_conference','Join Conference',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_join_conference','Join Meeting',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_join','Join',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_SETTINGS_CHANGED','BigBlueButton configuration options have been updated.',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_msgs','AT_ERROR_BBB_SETTINGS_FAILED','BigBlueButton configuration settings failed to save. Try adjusting the URL and double checking the Salt token.',NOW(),'');
@@ -37,14 +37,14 @@ INSERT INTO `language_text` VALUES ('en', '_msgs','AT_CONFIRM_BBB_DELETE_CONFIRM
 # New in V.04
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_name','Meeting Title',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_create_edit_meeting','Create/Edit Meeting',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_module','bbb_record_conference','Record Conference',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_record_conference','Record Meeting',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_recordings','Recordings',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_no_recording','No Recordings',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_meeting_ended','Ended',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_view_recording','View Recording',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_delete_recording','Delete Recording',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_join_meeting_moderate','Join as Moderator',NOW(),'');
-INSERT INTO `language_text` VALUES ('en', '_module','bbb_join_meeting','Join as Meeting',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','bbb_join_meeting','Join Meeting',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_view_meeting','View Meeting',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_yes_join','Yes, Join',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','bbb_no_cancel','No, Cancel',NOW(),'');

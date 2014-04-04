@@ -27,19 +27,21 @@
 
 if(isset($_POST['submit'])) {
 		global $db;
-		//Updtae URL 
-		$sql1 = "REPLACE INTO " . TABLE_PREFIX . "config  (name, value) VALUES ('bbb_url', '$bbb_url') ";
+		//Update URL 
+		$sql1 = "REPLACE INTO %sconfig  (name, value) VALUES ('bbb_url', '%s') ";
+        $result = queryDB($sql1, array(TABLE_PREFIX, $bbb_url));
 
-		if(mysql_query($sql1, $db)){	
+		if($result > 0){	
 			$msg->addFeedback('SETTINGS_CHANGED');
 			//Redirect back to the form
 		} else{
 		
 			$msg->addError('BBB_SETTINGS_FAILED');
 		}
-		$sql2 = "REPLACE INTO " . TABLE_PREFIX . "config  (name, value) VALUES ('bbb_salt', '$bbb_salt') ";
-	
-		if(mysql_query($sql2, $db)){	
+		$sql2 = "REPLACE INTO %sconfig  (name, value) VALUES ('bbb_salt', '%s') ";
+	    $result2 = queryDB($sql2, array(TABLE_PREFIX, $bbb_salt));
+	    
+		if($result > 0){
 			$msg->addFeedback('SETTINGS_CHANGED');
 			//Redirect back to the form
 
@@ -48,9 +50,10 @@ if(isset($_POST['submit'])) {
 			$msg->addError('BBB_SETTINGS_FAILED');
 		}
 		
-		$sql3 = "REPLACE INTO " . TABLE_PREFIX . "config  (name, value) VALUES ('bbb_max_recordings', '$bbb_max_recordings') ";
-	
-		if(mysql_query($sql3, $db)){	
+		$sql3 = "REPLACE INTO %sconfig  (name, value) VALUES ('bbb_max_recordings', '%s') ";
+	    $result3 = queryDB($sql3, array(TABLE_PREFIX, $bbb_max_recordings));
+	    
+		if($result3 > 0){
 			$msg->addFeedback('SETTINGS_CHANGED');
 			//Redirect back to the form
 

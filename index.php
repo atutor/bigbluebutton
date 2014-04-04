@@ -23,12 +23,13 @@ require("bbb_atutor.lib.php");
 
 
 $_courseId = $_SESSION['course_id'];
-$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_courseId'";
-$result = mysql_query($sql, $db);
 
-if(mysql_num_rows($result) != 0 && !isset($_GET['edit'])){
+$sql = "SELECT * from %sbigbluebutton WHERE course_id = %d";
+$rows_meetings = queryDB($sql, array(TABLE_PREFIX, $_courseId));
+
+if(count($rows_meetings) > 0 && !isset($_GET['edit'])){
 	$savant->assign('bbb', $bbb);
-	$savant->assign('result', $result);
+	$savant->assign('rows_meetings', $rows_meetings);
 	$savant->assign('response', $response);
 	$savant->assign('bbb_joinURL', $bbb_joinURL);
 	$savant->assign('bbb_recordURL', $bbb_recordURL);

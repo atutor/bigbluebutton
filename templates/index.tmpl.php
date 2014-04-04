@@ -26,9 +26,9 @@
 </tr>
 </thead>
 <tbody>
-	<?php if ($row = mysql_fetch_assoc($this->result)): ?>
-		<?php do { 
-				
+	<?php if(count($this->rows_meetings) > 0): ?>
+		<?php 
+		foreach($this->rows_meetings as $row){	
 	/////////////////
 	// Get the meeting info
 	$infoParams = array(
@@ -79,24 +79,46 @@
 						<td><?php echo _AT('bbb_meeting_ended'); ?></td>
 				<?php } else { ?>
 						<td><?php echo $meeting_status ?></td>	
-					<?php } ?>
+					<?php } ?>			
+				<?php if($_SESSION['is_admin'] > 0){ ?>				
+				    <?php if($row['status'] == "3") { ?>
+					    <td><?php echo _AT('bbb_meeting_ended'); ?></td>
+				    <?php } else if($meeting_status == "running"){ ?>
+					    <td><?php echo '<a href="mods/bigbluebutton/join_meeting.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a>
+					<?php	}else { ?>
+					    <td><?php echo '<a href="mods/bigbluebutton/join_meeting_moderate.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a> 
 					
-				<?php if($row['status'] == "3") { ?>
-					<td><?php echo _AT('bbb_meeting_ended'); ?></td>
+				    <?php if(BBB_MAX_RECORDINGS > 0){  ?>	
+					    or 
+				        <?php echo '<a href="mods/bigbluebutton/join_meeting_moderate.php?meetingId='.$row['meeting_id'].SEP.'record=true">'._AT('bbb_record_conference'); ?></a>
+				    <?php } ?>
+				        </td>
+				    <?php } ?>
 				<?php } else { ?>
-					<td><?php echo '<a href="mods/bigbluebutton/join_meeting.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a> 
-				</td>
-				<?php } ?>				
+				    <?php if($row['status'] == "3") { ?>
+					    <td><?php echo _AT('bbb_meeting_ended'); ?></td>
+				    <?php } else { ?>
+					    <td><?php echo '<a href="mods/bigbluebutton/join_meeting.php?meetingId='.$row['meeting_id'].'">'._AT('bbb_join_conference'); ?></a> 
+				    </td>
+				    <?php } ?>
+				<?php } ?>								
 				<?php if(BBB_MAX_RECORDINGS > 0){  ?>
-				<?php if($bbb_recordURL != ''){ ?>
-				<td><?php echo '<a href="mods/bigbluebutton/view_meeting.php?view_meeting='.$row['meeting_id'].'" target="_top">'._AT('bbb_view_recording'); ?></a>
-				</td>
-				<?php }else{ ?>
-				<td><?php echo _AT('bbb_no_recording'); ?></td>
-				<?php } ?>
-				<?php } ?>
+				    <?php if($bbb_recordURL != ''){ ?>
+                        <td>
+                        <?php 
+                            $bbb_recordURL = bbb_get_recordings($row['meeting_id']); 
+                        ?>
+                        <a style="text-decoration:underline;" tabindex="0" onkeypress="javascript:window.open('<?php echo $bbb_recordURL; ?>', 'BBBWindow', 'width=850,height=800')" onclick="javascript:window.open('<?php echo $bbb_recordURL; ?>', 'BBBWindow', 'width=800,height=800')"><?php echo _AT('bbb_view_recording'); ?></a>
+                        <!-- <?php echo '<a href="mods/bigbluebutton/view_meeting.php?view_meeting='.$row['meeting_id'].'" target="_top">'._AT('bbb_view_recording'); ?></a> -->
+                        </td>
+				    <?php }else{ ?>
+				        <td><?php echo _AT('bbb_no_recording'); ?></td>
+				    <?php } ?>
+			    <?php } ?>
 			</tr>
-		<?php } while ($row = mysql_fetch_assoc($this->result)); ?>
+		<?php 
+		    } // end foreach
+		?>
 	<?php else: ?>
 		<tr>
 			<td colspan="5"><?php echo _AT('none_found'); ?></td>

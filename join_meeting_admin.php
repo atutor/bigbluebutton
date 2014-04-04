@@ -18,15 +18,6 @@ define('AT_INCLUDE_PATH', '../../include/');
 // 2. require the `vitals` file before any others:
 require (AT_INCLUDE_PATH . 'vitals.inc.php');
 
-// A hack to redirect student to the index.php file in the module
-// Resolves a known bug in BBB, but will also prevent users given BBB priveleges from accessing this page
-// Test again when bbb0.8 comes out.
-
-//if(!$_SESSION['is_admin'] && admin_authenticate(AT_ADMIN_PRIV_ADMIN, FALSE)){
-//	header('Location: '.AT_BASE_HREF.'mods/bigbluebutton/index.php');
-//	exit;
-//}
-
 if (admin_authenticate(AT_ADMIN_PRIV_ADMIN, TRUE)){
 	//alls well
 }else{
@@ -45,10 +36,11 @@ require("bbb_atutor.lib.php");
 
 // Check if the users is attempting to access a meeting that has ended
 if(isset($_GET['meeting_id'])){
-$meeting_id = intval($_GET['meeting_id']);
-$sql = "SELECT status from ".TABLE_PREFIX."bigbluebutton WHERE meeting_id ='$meeting_id'";
-$result = mysql_query($sql, $db);
-$row = mysql_fetch_assoc($result);
+    $meeting_id = intval($_GET['meeting_id']);
+
+    $sql = "SELECT status from %sbigbluebutton WHERE meeting_id = %d";
+    $row = queryDB($sql, array(TABLE_PREFIX, $meeting_id), TRUE);
+
 	if($row['status'] == "3"){
 		$msg->addInfo("MEETING_ENDED_MOD");
 		header("Location: index_admin.php");
@@ -74,12 +66,12 @@ $bbb_welcome = _AT('bbb_welcome');
 
 if(isset($_GET['record'])){
 	// Check to see if max recordings has been reached
-	$sql = "SELECT * from ".TABLE_PREFIX."bigbluebutton WHERE course_id = '$_courseId'";
-	$result = mysql_query($sql,$db);
+	$sql = "SELECT * from %sbigbluebutton WHERE course_id = %d";
+	$rows_recordings = queryDB($sql, array(TABLE_PREFIX, $_courseId));
+	
 	$this_recordings = '';
 	$recordings = '0';
-	while($row = mysql_fetch_assoc($result)){
-
+	foreach($rows_recordings as $row){
 		$this_recording = bbb_get_recordings($row['meeting_id']);
 		if(preg_match("/http/",$this_recording)){
 			$recordings = ($recordings+1);
